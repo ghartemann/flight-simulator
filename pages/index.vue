@@ -1,37 +1,42 @@
 <template>
-    <div class="w-full min-h-screen flex overflow-hidden relative pb-16" ref="containerEl">
-        <div class="w-1/2">
-            <!--            <CardPlane-->
-            <!--                v-for="(plane, index) in planes"-->
-            <!--                :key="index"-->
-            <!--                @add-plane="addPlane(plane)"-->
-            <!--                :plane="plane"-->
-            <!--            ></CardPlane>-->
-            <UButton
-                @click="addPlane"
-            >
-                Take off
-            </UButton>
+    <div class="w-full min-h-screen flex flex-col justify-center items-center overflow-hidden relative pb-16" ref="containerEl">
+        <UCard class="z-50 w-1/3 backdrop-blur-md rounded-xl bg-accented/25 p-4">
+            <div class="flex justify-center mb-4">
+                <UButton
+                    size="xl"
+                    class="rounded-full"
+                    @click="addPlane"
+                    icon="i-lucide-plane-takeoff"
+                >
+                    Take off
+                </UButton>
+            </div>
 
+            <!-- Selected card -->
+            <div v-if="selectedPlane"
+                 @click="dropdownShown = !dropdownShown"
+            >
+                <CardPlane :plane="selectedPlane" class="w-full cursor-pointer" />
+            </div>
+
+            <!-- Dropdown -->
             <USelect
+                v-if="dropdownShown"
                 v-model="selectedPlaneSlug"
                 :items="planes"
                 value-key="slug"
-                class="w-full"
+                class="w-full mt-2"
             >
-                <template v-slot:item="{ item }">
-                    <CardPlane
-                        :plane="item"
-                        class="w-full"
-                    ></CardPlane>
+                <template #item="{ item }">
+                    <CardPlane :plane="item" class="w-full" />
                 </template>
             </USelect>
-        </div>
 
-        <div class="w-1/2">
-            nbplanes: {{ activePlanes.length }}<br>
-            total: {{ totalFuelPerSecond }}
-        </div>
+            <div class="w-1/2">
+                nbplanes: {{ activePlanes.length }}<br>
+                total: {{ totalFuelPerSecond }}
+            </div>
+        </UCard>
 
         <!-- Trails SVG overlay -->
         <svg
@@ -116,6 +121,8 @@ const rate = ref(10);
 const timeElapsed = ref(0); // in seconds
 const lastUpdateTime = ref(Date.now());
 
+const dropdownShown = ref(true);
+
 const planes = ref([]);
 
 const selectedPlaneSlug = ref(null);
@@ -167,12 +174,20 @@ function initPlanes() {
 }
 
 function addPlane() {
-    spawnFlyingPlane();
-
-    if (selectedPlaneSlug.value) {
-        activePlanes.value.push(selectedPlane.value);
+    if (!selectedPlaneSlug.value) {
+        return;
     }
+
+    spawnFlyingPlane();
+    selectedPlaneSlug.value;
+    activePlanes.value.push(selectedPlane.value);
 }
+
+watch(selectedPlaneSlug, (newVal) => {
+    if (newVal) {
+        dropdownShown.value = false;
+    }
+});
 </script>
 
 <style scoped>
