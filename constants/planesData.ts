@@ -1,0 +1,391 @@
+import type {Plane} from "../interfaces/Plane";
+
+const thingsData: Plane[] = [
+    {
+        "slug": "airbus-a330-200-241-11000",
+        "brand": "Airbus",
+        "model": "A330-200",
+        "firstFlight": 1997,
+        "seats": 241,
+        "sectorKm": 11000,
+        "fuelBurnKgPerKm": 6.4,
+        "fuelPerSeatLPer100Km": 3.32,
+        "litersPerSecond": 2.0
+    },
+    {
+        "slug": "airbus-a330-200-248-10277",
+        "brand": "Airbus",
+        "model": "A330-200",
+        "firstFlight": 1997,
+        "seats": 248,
+        "sectorKm": 10277,
+        "fuelBurnKgPerKm": 6.55,
+        "fuelPerSeatLPer100Km": 3.3,
+        "litersPerSecond": 2.05
+    },
+    // {
+    //     "slug": "airbus-a330-300-274-10275",
+    //     "brand": "Airbus",
+    //     "model": "A330-300",
+    //     "firstFlight": 1992,
+    //     "seats": 274,
+    //     "sectorKm": 10275,
+    //     "fuelBurnKgPerKm": 6.81,
+    //     "fuelPerSeatLPer100Km": 3.11,
+    //     "litersPerSecond": 2.13
+    // },
+    // {
+    //     "slug": "airbus-a330-800-248-8610",
+    //     "brand": "Airbus",
+    //     "model": "A330-800",
+    //     "firstFlight": 2017,
+    //     "seats": 248,
+    //     "sectorKm": 8610,
+    //     "fuelBurnKgPerKm": 5.45,
+    //     "fuelPerSeatLPer100Km": 2.75,
+    //     "litersPerSecond": 1.70
+    // },
+    // {
+    //     "slug": "airbus-a330-900-300-8610",
+    //     "brand": "Airbus",
+    //     "model": "A330-900",
+    //     "firstFlight": 2017,
+    //     "seats": 300,
+    //     "sectorKm": 8610,
+    //     "fuelBurnKgPerKm": 5.94,
+    //     "fuelPerSeatLPer100Km": 2.48,
+    //     "litersPerSecond": 1.86
+    // },
+    // {
+    //     "slug": "airbus-a340-300-262-11000",
+    //     "brand": "Airbus",
+    //     "model": "A340-300",
+    //     "firstFlight": 1992,
+    //     "seats": 262,
+    //     "sectorKm": 11000,
+    //     "fuelBurnKgPerKm": 7.32,
+    //     "fuelPerSeatLPer100Km": 3.49,
+    //     "litersPerSecond": 2.29
+    // },
+    // {
+    //     "slug": "airbus-a350-900-315-9208",
+    //     "brand": "Airbus",
+    //     "model": "A350-900",
+    //     "firstFlight": 2013,
+    //     "seats": 315,
+    //     "sectorKm": 9208,
+    //     "fuelBurnKgPerKm": 6.03,
+    //     "fuelPerSeatLPer100Km": 2.39,
+    //     "litersPerSecond": 1.89
+    // },
+    // {
+    //     "slug": "airbus-a350-900-318-10249",
+    //     "brand": "Airbus",
+    //     "model": "A350-900",
+    //     "firstFlight": 2013,
+    //     "seats": 318,
+    //     "sectorKm": 10249,
+    //     "fuelBurnKgPerKm": 6.52,
+    //     "fuelPerSeatLPer100Km": 2.56,
+    //     "litersPerSecond": 2.04
+    // },
+    // {
+    //     "slug": "airbus-a350-900-315-12116",
+    //     "brand": "Airbus",
+    //     "model": "A350-900",
+    //     "firstFlight": 2013,
+    //     "seats": 315,
+    //     "sectorKm": 12116,
+    //     "fuelBurnKgPerKm": 7.07,
+    //     "fuelPerSeatLPer100Km": 2.81,
+    //     "litersPerSecond": 2.21
+    // },
+    // {
+    //     "slug": "airbus-a350-1000-327-10243",
+    //     "brand": "Airbus",
+    //     "model": "A350-1000",
+    //     "firstFlight": 2016,
+    //     "seats": 327,
+    //     "sectorKm": 10243,
+    //     "fuelBurnKgPerKm": 7.46,
+    //     "fuelPerSeatLPer100Km": 2.85,
+    //     "litersPerSecond": 2.33
+    // },
+    // {
+    //     "slug": "airbus-a350-1000-367-10243",
+    //     "brand": "Airbus",
+    //     "model": "A350-1000",
+    //     "firstFlight": 2016,
+    //     "seats": 367,
+    //     "sectorKm": 10243,
+    //     "fuelBurnKgPerKm": 7.58,
+    //     "fuelPerSeatLPer100Km": 2.58,
+    //     "litersPerSecond": 2.37
+    // },
+    // {
+    //     "slug": "airbus-a380-525-13300",
+    //     "brand": "Airbus",
+    //     "model": "A380",
+    //     "firstFlight": 2005,
+    //     "seats": 525,
+    //     "sectorKm": 13300,
+    //     "fuelBurnKgPerKm": 13.78,
+    //     "fuelPerSeatLPer100Km": 3.27,
+    //     "litersPerSecond": 4.30
+    // },
+    // {
+    //     "slug": "airbus-a380-544-11000",
+    //     "brand": "Airbus",
+    //     "model": "A380",
+    //     "firstFlight": 2005,
+    //     "seats": 544,
+    //     "sectorKm": 11000,
+    //     "fuelBurnKgPerKm": 13.78,
+    //     "fuelPerSeatLPer100Km": 3.16,
+    //     "litersPerSecond": 4.30
+    // },
+    // {
+    //     "slug": "boeing-747-400-416-11000",
+    //     "brand": "Boeing",
+    //     "model": "747-400",
+    //     "firstFlight": 1988,
+    //     "seats": 416,
+    //     "sectorKm": 11000,
+    //     "fuelBurnKgPerKm": 11.11,
+    //     "fuelPerSeatLPer100Km": 3.34,
+    //     "litersPerSecond": 3.47
+    // },
+    // {
+    //     "slug": "boeing-747-400-393-10192",
+    //     "brand": "Boeing",
+    //     "model": "747-400",
+    //     "firstFlight": 1988,
+    //     "seats": 393,
+    //     "sectorKm": 10192,
+    //     "fuelBurnKgPerKm": 11.82,
+    //     "fuelPerSeatLPer100Km": 3.76,
+    //     "litersPerSecond": 3.69
+    // },
+    // {
+    //     "slug": "boeing-747-400-487-10147",
+    //     "brand": "Boeing",
+    //     "model": "747-400",
+    //     "firstFlight": 1988,
+    //     "seats": 487,
+    //     "sectorKm": 10147,
+    //     "fuelBurnKgPerKm": 12.31,
+    //     "fuelPerSeatLPer100Km": 3.16,
+    //     "litersPerSecond": 3.85
+    // },
+    // {
+    //     "slug": "boeing-747-8-467-11000",
+    //     "brand": "Boeing",
+    //     "model": "747-8",
+    //     "firstFlight": 2011,
+    //     "seats": 467,
+    //     "sectorKm": 11000,
+    //     "fuelBurnKgPerKm": 10.54,
+    //     "fuelPerSeatLPer100Km": 2.82,
+    //     "litersPerSecond": 3.29
+    // },
+    // {
+    //     "slug": "boeing-747-8-405-13300",
+    //     "brand": "Boeing",
+    //     "model": "747-8",
+    //     "firstFlight": 2011,
+    //     "seats": 405,
+    //     "sectorKm": 13300,
+    //     "fuelBurnKgPerKm": 10.9,
+    //     "fuelPerSeatLPer100Km": 3.35,
+    //     "litersPerSecond": 3.41
+    // },
+    // {
+    //     "slug": "boeing-777-200er-304-10251",
+    //     "brand": "Boeing",
+    //     "model": "777-200ER",
+    //     "firstFlight": 1996,
+    //     "seats": 304,
+    //     "sectorKm": 10251,
+    //     "fuelBurnKgPerKm": 7.57,
+    //     "fuelPerSeatLPer100Km": 3.11,
+    //     "litersPerSecond": 2.36
+    // },
+    // {
+    //     "slug": "boeing-777-200er-301-11000",
+    //     "brand": "Boeing",
+    //     "model": "777-200ER",
+    //     "firstFlight": 1996,
+    //     "seats": 301,
+    //     "sectorKm": 11000,
+    //     "fuelBurnKgPerKm": 7.42,
+    //     "fuelPerSeatLPer100Km": 3.08,
+    //     "litersPerSecond": 2.32
+    // },
+    // {
+    //     "slug": "boeing-777-200er-301-11000-bis",
+    //     "brand": "Boeing",
+    //     "model": "777-200ER",
+    //     "firstFlight": 1996,
+    //     "seats": 301,
+    //     "sectorKm": 11000,
+    //     "fuelBurnKgPerKm": 7.44,
+    //     "fuelPerSeatLPer100Km": 3.09,
+    //     "litersPerSecond": 2.33
+    // },
+    // {
+    //     "slug": "boeing-777-200lr-291-9208",
+    //     "brand": "Boeing",
+    //     "model": "777-200LR",
+    //     "firstFlight": 2005,
+    //     "seats": 291,
+    //     "sectorKm": 9208,
+    //     "fuelBurnKgPerKm": 7.57,
+    //     "fuelPerSeatLPer100Km": 3.25,
+    //     "litersPerSecond": 2.36
+    // },
+    // {
+    //     "slug": "boeing-777-300er-382-10199",
+    //     "brand": "Boeing",
+    //     "model": "777-300ER",
+    //     "firstFlight": 2003,
+    //     "seats": 382,
+    //     "sectorKm": 10199,
+    //     "fuelBurnKgPerKm": 8.86,
+    //     "fuelPerSeatLPer100Km": 2.9,
+    //     "litersPerSecond": 2.77
+    // },
+    // {
+    //     "slug": "boeing-777-300er-365-11000",
+    //     "brand": "Boeing",
+    //     "model": "777-300ER",
+    //     "firstFlight": 2003,
+    //     "seats": 365,
+    //     "sectorKm": 11000,
+    //     "fuelBurnKgPerKm": 8.49,
+    //     "fuelPerSeatLPer100Km": 2.91,
+    //     "litersPerSecond": 2.65
+    // },
+    // {
+    //     "slug": "boeing-777-300er-344-13300",
+    //     "brand": "Boeing",
+    //     "model": "777-300ER",
+    //     "firstFlight": 2003,
+    //     "seats": 344,
+    //     "sectorKm": 13300,
+    //     "fuelBurnKgPerKm": 8.58,
+    //     "fuelPerSeatLPer100Km": 3.11,
+    //     "litersPerSecond": 2.68
+    // },
+    // {
+    //     "slug": "boeing-777-9x-395-13300",
+    //     "brand": "Boeing",
+    //     "model": "777-9X",
+    //     "firstFlight": 2020,
+    //     "seats": 395,
+    //     "sectorKm": 13300,
+    //     "fuelBurnKgPerKm": 7.69,
+    //     "fuelPerSeatLPer100Km": 2.42,
+    //     "litersPerSecond": 2.40
+    // },
+    // {
+    //     "slug": "boeing-787-8-243-8610",
+    //     "brand": "Boeing",
+    //     "model": "787-8",
+    //     "firstFlight": 2011,
+    //     "seats": 243,
+    //     "sectorKm": 8610,
+    //     "fuelBurnKgPerKm": 5.38,
+    //     "fuelPerSeatLPer100Km": 2.77,
+    //     "litersPerSecond": 1.68
+    // },
+    // {
+    //     "slug": "boeing-787-8-genx-220-10255",
+    //     "brand": "Boeing",
+    //     "model": "787-8 GEnx",
+    //     "firstFlight": 2011,
+    //     "seats": 220,
+    //     "sectorKm": 10255,
+    //     "fuelBurnKgPerKm": 5.3,
+    //     "fuelPerSeatLPer100Km": 3.01,
+    //     "litersPerSecond": 1.66
+    // },
+    // {
+    //     "slug": "boeing-787-8-trent-220-10255",
+    //     "brand": "Boeing",
+    //     "model": "787-8 Trent",
+    //     "firstFlight": 2011,
+    //     "seats": 220,
+    //     "sectorKm": 10255,
+    //     "fuelBurnKgPerKm": 5.51,
+    //     "fuelPerSeatLPer100Km": 3.13,
+    //     "litersPerSecond": 1.72
+    // },
+    // {
+    //     "slug": "boeing-787-9-genx-294-8610",
+    //     "brand": "Boeing",
+    //     "model": "787-9 GEnx",
+    //     "firstFlight": 2013,
+    //     "seats": 294,
+    //     "sectorKm": 8610,
+    //     "fuelBurnKgPerKm": 5.85,
+    //     "fuelPerSeatLPer100Km": 2.49,
+    //     "litersPerSecond": 1.83
+    // },
+    // {
+    //     "slug": "boeing-787-9-304-9208",
+    //     "brand": "Boeing",
+    //     "model": "787-9",
+    //     "firstFlight": 2013,
+    //     "seats": 304,
+    //     "sectorKm": 9208,
+    //     "fuelBurnKgPerKm": 5.63,
+    //     "fuelPerSeatLPer100Km": 2.31,
+    //     "litersPerSecond": 1.76
+    // },
+    // {
+    //     "slug": "boeing-787-9-genx-266-10249",
+    //     "brand": "Boeing",
+    //     "model": "787-9 GEnx",
+    //     "firstFlight": 2013,
+    //     "seats": 266,
+    //     "sectorKm": 10249,
+    //     "fuelBurnKgPerKm": 5.62,
+    //     "fuelPerSeatLPer100Km": 2.64,
+    //     "litersPerSecond": 1.76
+    // },
+    // {
+    //     "slug": "boeing-787-9-291-12116",
+    //     "brand": "Boeing",
+    //     "model": "787-9",
+    //     "firstFlight": 2013,
+    //     "seats": 291,
+    //     "sectorKm": 12116,
+    //     "fuelBurnKgPerKm": 7.18,
+    //     "fuelPerSeatLPer100Km": 3.08,
+    //     "litersPerSecond": 2.25
+    // },
+    // {
+    //     "slug": "boeing-787-10-genx-337-10240",
+    //     "brand": "Boeing",
+    //     "model": "787-10 GEnx",
+    //     "firstFlight": 2017,
+    //     "seats": 337,
+    //     "sectorKm": 10240,
+    //     "fuelBurnKgPerKm": 6.12,
+    //     "fuelPerSeatLPer100Km": 2.27,
+    //     "litersPerSecond": 1.91
+    // },
+    // {
+    //     "slug": "boeing-787-10-trent-337-10240",
+    //     "brand": "Boeing",
+    //     "model": "787-10 Trent",
+    //     "firstFlight": 2017,
+    //     "seats": 337,
+    //     "sectorKm": 10240,
+    //     "fuelBurnKgPerKm": 6.24,
+    //     "fuelPerSeatLPer100Km": 2.31,
+    //     "litersPerSecond": 1.95
+    // }
+];
+
+export default thingsData;
