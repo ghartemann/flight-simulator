@@ -1,7 +1,32 @@
 <template>
     <div class="w-full min-h-screen flex flex-col justify-center items-center overflow-hidden relative pb-16" ref="containerEl">
-        <UCard class="z-50 w-1/3 backdrop-blur-md rounded-xl bg-accented/25 p-4">
-            <div class="flex justify-center mb-4">
+        <UCard variant="soft"
+               class="z-50 w-1/3 backdrop-blur-md rounded-xl p-4"
+        >
+            <!-- Selected card -->
+            <CardPlane
+                v-if="selectedPlane"
+                @click="changePlane"
+                :plane="selectedPlane"
+                edit-icon
+                class="w-full cursor-pointer"
+            ></CardPlane>
+
+            <!-- Dropdown -->
+            <USelect
+                v-if="dropdownShown"
+                v-model="selectedPlaneSlug"
+                :items="planes"
+                value-key="slug"
+                class="w-full mt-2"
+                placeholder="Select Plane"
+            >
+                <template #item="{ item }">
+                    <CardPlane :plane="item" class="w-full" />
+                </template>
+            </USelect>
+
+            <div class="flex justify-center my-4">
                 <UButton
                     size="xl"
                     class="rounded-full"
@@ -12,30 +37,41 @@
                 </UButton>
             </div>
 
-            <!-- Selected card -->
-            <div v-if="selectedPlane"
-                 @click="dropdownShown = !dropdownShown"
-            >
-                <CardPlane :plane="selectedPlane" class="w-full cursor-pointer" />
-            </div>
+            <UCard variant="outline">
+                <table class="w-full">
+                    <tbody>
+                        <tr>
+                            <td>
+                                Nb. of planes
+                            </td>
 
-            <!-- Dropdown -->
-            <USelect
-                v-if="dropdownShown"
-                v-model="selectedPlaneSlug"
-                :items="planes"
-                value-key="slug"
-                class="w-full mt-2"
-            >
-                <template #item="{ item }">
-                    <CardPlane :plane="item" class="w-full" />
-                </template>
-            </USelect>
+                            <td>
+                                {{ activePlanes.length }}
+                            </td>
+                        </tr>
 
-            <div class="w-1/2">
-                nbplanes: {{ activePlanes.length }}<br>
-                total: {{ totalFuelPerSecond }}
-            </div>
+                        <tr>
+                            <td>
+                                Fuel burned per second
+                            </td>
+
+                            <td>
+                                {{ totalFuelPerSecond }} L/s
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="pt-4">
+                                Fuel burned so far
+                            </td>
+
+                            <td class="pt-4">
+                                {{ 0 }} L
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </UCard>
         </UCard>
 
         <!-- Trails SVG overlay -->
@@ -179,8 +215,12 @@ function addPlane() {
     }
 
     spawnFlyingPlane();
-    selectedPlaneSlug.value;
     activePlanes.value.push(selectedPlane.value);
+}
+
+function changePlane() {
+    selectedPlaneSlug.value = null;
+    dropdownShown.value = true;
 }
 
 watch(selectedPlaneSlug, (newVal) => {
