@@ -1,17 +1,17 @@
-import type {Plane} from "../interfaces/Plane";
+import type {Plane} from "~/interfaces/Plane";
 
 const thingsData: Plane[] = [
-    {
-        "slug": "airbus-a330-200-241-11000",
-        "brand": "Airbus",
-        "model": "A330-200",
-        "firstFlight": 1997,
-        "seats": 241,
-        "sectorKm": 11000,
-        "fuelBurnKgPerKm": 6.4,
-        "fuelPerSeatLPer100Km": 3.32,
-        "litersPerSecond": 2.0
-    },
+    // {
+    //     "slug": "airbus-a330-200-241-11000",
+    //     "brand": "Airbus",
+    //     "model": "A330-200",
+    //     "firstFlight": 1997,
+    //     "seats": 241,
+    //     "sectorKm": 11000,
+    //     "fuelBurnKgPerKm": 6.4,
+    //     "fuelPerSeatLPer100Km": 3.32,
+    //     "litersPerSecond": 2.0
+    // },
     {
         "slug": "airbus-a330-200-248-10277",
         "brand": "Airbus",
@@ -133,17 +133,17 @@ const thingsData: Plane[] = [
     //     "fuelPerSeatLPer100Km": 3.27,
     //     "litersPerSecond": 4.30
     // },
-    // {
-    //     "slug": "airbus-a380-544-11000",
-    //     "brand": "Airbus",
-    //     "model": "A380",
-    //     "firstFlight": 2005,
-    //     "seats": 544,
-    //     "sectorKm": 11000,
-    //     "fuelBurnKgPerKm": 13.78,
-    //     "fuelPerSeatLPer100Km": 3.16,
-    //     "litersPerSecond": 4.30
-    // },
+    {
+        "slug": "airbus-a380-544-11000",
+        "brand": "Airbus",
+        "model": "A380",
+        "firstFlight": 2005,
+        "seats": 544,
+        "sectorKm": 11000,
+        "fuelBurnKgPerKm": 13.78,
+        "fuelPerSeatLPer100Km": 3.16,
+        "litersPerSecond": 4.30
+    },
     // {
     //     "slug": "boeing-747-400-416-11000",
     //     "brand": "Boeing",
@@ -166,17 +166,17 @@ const thingsData: Plane[] = [
     //     "fuelPerSeatLPer100Km": 3.76,
     //     "litersPerSecond": 3.69
     // },
-    // {
-    //     "slug": "boeing-747-400-487-10147",
-    //     "brand": "Boeing",
-    //     "model": "747-400",
-    //     "firstFlight": 1988,
-    //     "seats": 487,
-    //     "sectorKm": 10147,
-    //     "fuelBurnKgPerKm": 12.31,
-    //     "fuelPerSeatLPer100Km": 3.16,
-    //     "litersPerSecond": 3.85
-    // },
+    {
+        "slug": "boeing-747-400-487-10147",
+        "brand": "Boeing",
+        "model": "747-400",
+        "firstFlight": 1988,
+        "seats": 487,
+        "sectorKm": 10147,
+        "fuelBurnKgPerKm": 12.31,
+        "fuelPerSeatLPer100Km": 3.16,
+        "litersPerSecond": 3.85
+    },
     // {
     //     "slug": "boeing-747-8-467-11000",
     //     "brand": "Boeing",

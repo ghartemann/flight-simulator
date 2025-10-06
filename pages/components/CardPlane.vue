@@ -15,7 +15,8 @@
                                 </td>
 
                                 <td class="pl-4 text-xs text-neutral-400">
-                                    {{ subBlock.value }} <span v-if="subBlock.unit">{{ subBlock.unit }}</span>
+                                    {{ subBlock.value }}
+                                    <span v-if="subBlock.unit">{{ subBlock.unit }}</span>
                                 </td>
                             </tr>
                         </tbody>

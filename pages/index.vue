@@ -26,7 +26,7 @@
                 </template>
             </USelect>
 
-            <div class="flex justify-center my-4">
+            <div class="flex justify-center my-4 gap-4">
                 <UButton
                     size="xl"
                     class="rounded-full"
@@ -34,6 +34,15 @@
                     icon="i-lucide-plane-takeoff"
                 >
                     Take off
+                </UButton>
+
+                <UButton
+                    size="xl"
+                    class="rounded-full"
+                    @click="addAllPlanes"
+                    icon="i-lucide-plane-takeoff"
+                >
+                    Match with the real world
                 </UButton>
             </div>
 
@@ -51,22 +60,52 @@
                         </tr>
 
                         <tr>
-                            <td>
+                            <td class="pt-4">
                                 Fuel burned per second
                             </td>
 
+                            <td class="pt-4">
+                                {{ useFormat().number(totalFuelPerSecond, 2, 2) }} L/s
+                            </td>
+                        </tr>
+
+                        <tr>
                             <td>
-                                {{ totalFuelPerSecond }} L/s
+                                Fuel burned so far
+                            </td>
+
+                            <td>
+                                {{ useFormat().number(totalFuelBurned, 2, 2) }} L
                             </td>
                         </tr>
 
                         <tr>
                             <td class="pt-4">
-                                Fuel burned so far
+                                CO2 produced per second
                             </td>
 
                             <td class="pt-4">
-                                {{ 0 }} L
+                                {{ useFormat().number((totalFuelPerSecond * 2.5), 2, 2) }} kg CO₂/s
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                CO2 produced so far
+                            </td>
+
+                            <td>
+                                {{ useFormat().number((totalFuelBurned * 2.5), 2, 2) }} kg CO₂
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Quantity remaining until the annual levels (2023)
+                            </td>
+
+                            <td>
+                                {{ useFormat().number((CO2_PRODUCED_2023 - (totalFuelBurned * 2.5)), 2, 2) }} kg CO₂
                             </td>
                         </tr>
                     </tbody>
@@ -118,6 +157,12 @@ import planesData from '~/constants/planesData.js';
 import CardPlane from '~/pages/components/CardPlane.vue';
 import LucidePlaneIcon from '~/pages/components/svg/LucidePlaneIcon.vue';
 
+const REFRESH_RATE = 50;
+const MAX_VISUAL_PLANES = 200;
+const REAL_WORLD_PLANES_IN_THE_SKY = 14000;
+
+const CO2_PRODUCED_2023 = 882000000000; // in kg
+
 const meta = {
     title: 'Flight Simulator',
     description: 'It\'s just a template.'
@@ -153,8 +198,7 @@ const {
     cleanup
 } = usePlanes();
 
-const rate = ref(10);
-const timeElapsed = ref(0); // in seconds
+const timeElapsed = ref(0);
 const lastUpdateTime = ref(Date.now());
 
 const dropdownShown = ref(true);
@@ -171,6 +215,7 @@ const selectedPlane = computed(() => {
 });
 
 const activePlanes = ref([]);
+const totalFuelBurned = ref(0);
 
 const loading = computed(() => planes.value.length === 0);
 
@@ -184,16 +229,34 @@ const totalFuelPerSecond = computed(() => {
     return total.reduce((a, b) => a + b);
 });
 
+let fuelTimer = null;
+
+function update() {
+    const now = Date.now();
+    const delta = (now - lastUpdateTime.value) / 1000;
+    lastUpdateTime.value = now;
+
+    timeElapsed.value += delta;
+
+    totalFuelBurned.value += totalFuelPerSecond.value * delta;
+}
+
 onMounted(() => {
     initPlanes();
     updateContainerSize();
     window.addEventListener('resize', updateContainerSize);
     startAnimation();
+    
+    fuelTimer = setInterval(update, REFRESH_RATE);
 });
 
 onBeforeUnmount(() => {
     cleanup();
     window.removeEventListener('resize', updateContainerSize);
+    
+    if (fuelTimer) {
+        clearInterval(fuelTimer);
+    }
 });
 
 function initPlanes() {
@@ -214,8 +277,17 @@ function addPlane() {
         return;
     }
 
-    spawnFlyingPlane();
     activePlanes.value.push(selectedPlane.value);
+
+    if (activePlanes.value.length <= MAX_VISUAL_PLANES) {
+        spawnFlyingPlane();
+    }
+}
+
+function addAllPlanes() {
+    while(activePlanes.value.length < REAL_WORLD_PLANES_IN_THE_SKY) {
+        addPlane();
+    }
 }
 
 function changePlane() {

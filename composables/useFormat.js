@@ -1,12 +1,10 @@
 import currencies from "~/constants/currencies.js";
 
 export default function useFormat() {
-    function formatPrice(number, minimumFractionDigits = 0, maximumFractionDigits = 2, currency = 'EUR') {
+    function number(number, minimumFractionDigits = 0, maximumFractionDigits = 2) {
         return new Intl.NumberFormat(
-            'en-GB',
+            'en-CA',
             {
-                style: 'currency',
-                currency: currency,
                 minimumFractionDigits: !Number.isFinite(number) || !Number.isInteger(number) ? 2 : minimumFractionDigits,
                 maximumFractionDigits
             }
@@ -172,7 +170,7 @@ export default function useFormat() {
     }
 
     return {
-        formatPrice,
+        number,
         formatNumberNice,
         formatHours,
         convertCurrency
