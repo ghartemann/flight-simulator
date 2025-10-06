@@ -1,13 +1,14 @@
 <template>
     <UCard :ui="{root: 'relative cursor-pointer'}">
         <div class="flex items-center justify-between overflow-hidden relative">
-            <div>
+            <div class="grow">
                 <div class="font-medium mb-2">
                     {{ plane.brand }} {{ plane.model }}
                 </div>
 
-                <div class="grid grid-cols-2">
-                    <table v-for="(block, index) in infoBlocks" :key="index">
+                <div class="w-full flex justify-between">
+                    <div class="w-1/3" v-for="(block, index) in infoBlocks" :key="index">
+                    <table >
                         <tbody>
                             <tr v-for="(subBlock, subIndex) in block" :key="subIndex">
                                 <td class="text-xs text-neutral-400">
@@ -21,6 +22,7 @@
                             </tr>
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
 
@@ -64,14 +66,26 @@ const infoBlocks = computed(() => {
         ],
         [
             {
-                title: 'Fuel burned per Km',
+                title: 'Fuel per Km',
                 value: props.plane.fuelBurnKgPerKm,
                 unit: 'L/Km'
             },
             {
-                title: 'Fuel burned per sec.',
+                title: 'Fuel per sec.',
                 value: props.plane.litersPerSecond,
                 unit: 'L/s'
+            }
+        ],
+        [
+            {
+                title: 'CO₂ per Km',
+                value: useFormat().number(props.plane.fuelBurnKgPerKm * 3.16, 2, 2),
+                unit: 'kg CO₂/Km'
+            },
+            {
+                title: 'CO₂ per sec.',
+                value: useFormat().number(props.plane.litersPerSecond * 2.5, 2, 2),
+                unit: 'kg CO₂/s'
             }
         ]
     ]

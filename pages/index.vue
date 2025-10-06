@@ -1,7 +1,7 @@
 <template>
     <div class="w-full min-h-screen flex flex-col justify-center items-center overflow-hidden relative pb-16" ref="containerEl">
         <UCard variant="soft"
-               class="z-50 w-1/3 backdrop-blur-md rounded-xl p-4"
+               class="z-50 w-1/2 backdrop-blur-md rounded-xl p-4"
         >
             <!-- Selected card -->
             <CardPlane
@@ -47,69 +47,13 @@
             </div>
 
             <UCard variant="outline">
-                <table class="w-full">
-                    <tbody>
-                        <tr>
-                            <td>
-                                Nb. of planes
-                            </td>
-
-                            <td>
-                                {{ activePlanes.length }}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td class="pt-4">
-                                Fuel burned per second
-                            </td>
-
-                            <td class="pt-4">
-                                {{ useFormat().number(totalFuelPerSecond, 2, 2) }} L/s
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                Fuel burned so far
-                            </td>
-
-                            <td>
-                                {{ useFormat().number(totalFuelBurned, 2, 2) }} L
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td class="pt-4">
-                                CO2 produced per second
-                            </td>
-
-                            <td class="pt-4">
-                                {{ useFormat().number((totalFuelPerSecond * 2.5), 2, 2) }} kg CO₂/s
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                CO2 produced so far
-                            </td>
-
-                            <td>
-                                {{ useFormat().number((totalFuelBurned * 2.5), 2, 2) }} kg CO₂
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                Quantity remaining until the annual levels (2023)
-                            </td>
-
-                            <td>
-                                {{ useFormat().number((CO2_PRODUCED_2023 - (totalFuelBurned * 2.5)), 2, 2) }} kg CO₂
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="flex flex-col gap-4">
+                    <BlockData
+                        v-for="(data, index) in displayedData"
+                        :key="index"
+                        :data="data"
+                    ></BlockData>
+                </div>
             </UCard>
         </UCard>
 
@@ -154,6 +98,7 @@
 <script setup>
 import { usePlanes } from '~/composables/usePlanes.js';
 import planesData from '~/constants/planesData.js';
+import BlockData from '~/pages/components/BlockData.vue';
 import CardPlane from '~/pages/components/CardPlane.vue';
 import LucidePlaneIcon from '~/pages/components/svg/LucidePlaneIcon.vue';
 
@@ -217,6 +162,20 @@ const selectedPlane = computed(() => {
 const activePlanes = ref([]);
 const totalFuelBurned = ref(0);
 
+const totalNbPlanes = computed(() => {
+    return activePlanes.value.length;
+});
+
+const totalNbSeats = computed(() => {
+    const total = activePlanes.value.map(ap => ap.seats);
+
+    if (total.length === 0) {
+        return 0;
+    }
+
+    return total.reduce((a, b) => a + b);
+});
+
 const loading = computed(() => planes.value.length === 0);
 
 const totalFuelPerSecond = computed(() => {
@@ -227,6 +186,62 @@ const totalFuelPerSecond = computed(() => {
     }
 
     return total.reduce((a, b) => a + b);
+});
+
+const displayedData = computed(() => {
+    return [
+        {
+            icon: 'i-lucide-plane',
+            title: 'Planes',
+            data: [
+                {
+                    title: 'Nb. of planes',
+                    value: totalNbPlanes.value
+                },
+                {
+                    title: 'Nb. of seats',
+                    value: totalNbSeats.value
+                }
+            ]
+        },
+        {
+            icon: 'i-lucide-fuel',
+            title: 'Fuel',
+            data: [
+                {
+                    title: 'Burned per second',
+                    value: useFormat().number(totalFuelPerSecond.value, 2, 2),
+                    unit: 'L/s'
+                },
+                {
+                    title: 'Burned so far',
+                    value: useFormat().number(totalFuelBurned.value, 2, 2),
+                    unit: 'L'
+                }
+            ]
+        },
+        {
+            icon: 'i-lucide-cloud-fog',
+            title: 'CO₂',
+            data: [
+                {
+                    title: 'Produced per second',
+                    value: useFormat().number(totalFuelPerSecond.value * 2.5, 2, 2),
+                    unit: 'kg CO₂/s'
+                },
+                {
+                    title: 'Produced so far',
+                    value: useFormat().number(totalFuelBurned.value * 2.5, 2, 2),
+                    unit: 'kg CO₂'
+                },
+                {
+                    title: 'Remaining to reach 2023 annual total',
+                    value: useFormat().number(CO2_PRODUCED_2023 - (totalFuelBurned.value * 2.5), 2, 2),
+                    unit: 'kg CO₂'
+                }
+            ]
+        }
+    ];
 });
 
 let fuelTimer = null;
@@ -246,14 +261,14 @@ onMounted(() => {
     updateContainerSize();
     window.addEventListener('resize', updateContainerSize);
     startAnimation();
-    
+
     fuelTimer = setInterval(update, REFRESH_RATE);
 });
 
 onBeforeUnmount(() => {
     cleanup();
     window.removeEventListener('resize', updateContainerSize);
-    
+
     if (fuelTimer) {
         clearInterval(fuelTimer);
     }
@@ -285,7 +300,7 @@ function addPlane() {
 }
 
 function addAllPlanes() {
-    while(activePlanes.value.length < REAL_WORLD_PLANES_IN_THE_SKY) {
+    while (activePlanes.value.length < REAL_WORLD_PLANES_IN_THE_SKY) {
         addPlane();
     }
 }
