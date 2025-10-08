@@ -21,7 +21,7 @@ export default defineNuxtConfig({
 
     app: {
         head: {
-            title: 'Just-Nuxt',
+            title: 'Flight Simulator',
             htmlAttrs: {
                 lang: 'en',
             },
@@ -38,7 +38,7 @@ export default defineNuxtConfig({
     sentry: {
         sourceMapsUploadOptions: {
             org: 'ghartemann',
-            project: 'just-nuxt'
+            project: 'flight-simulator'
         }
     },
 

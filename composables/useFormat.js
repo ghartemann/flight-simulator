@@ -1,15 +1,13 @@
 import currencies from "~/constants/currencies.js";
 
 export default function useFormat() {
-    function number(number, minimumFractionDigits = 0, maximumFractionDigits = 2) {
-        return new Intl.NumberFormat(
-            'en-CA',
-            {
-                minimumFractionDigits: !Number.isFinite(number) || !Number.isInteger(number) ? 2 : minimumFractionDigits,
-                maximumFractionDigits
-            }
-        ).format(number);
+    function number(value, minimumFractionDigits = 0, maximumFractionDigits = 2) {
+        return new Intl.NumberFormat('en-CA', {
+            minimumFractionDigits: Number.isFinite(value) ? minimumFractionDigits : 2,
+            maximumFractionDigits
+        }).format(value);
     }
+
 
     // la pire fonction que j'ai jamais écrite mdr
     function formatHours(hours, short = false, roughly = false, noPerSecond = false) {

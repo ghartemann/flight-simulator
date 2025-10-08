@@ -47,13 +47,16 @@
             </div>
 
             <UCard variant="outline">
-                <div class="flex flex-col gap-4">
-                    <BlockData
-                        v-for="(data, index) in displayedData"
-                        :key="index"
-                        :data="data"
-                    ></BlockData>
-                </div>
+                <TableData :data="displayedData"></TableData>
+
+
+<!--                <div class="flex flex-col gap-4">-->
+<!--                    <BlockData-->
+<!--                        v-for="(data, index) in displayedData"-->
+<!--                        :key="index"-->
+<!--                        :data="data"-->
+<!--                    ></BlockData>-->
+<!--                </div>-->
             </UCard>
         </UCard>
 
@@ -69,7 +72,7 @@
                     v-if="fp.trail.length > 1"
                     :points="fp.trail.map(p => `${p.x},${p.y}`).join(' ')"
                     stroke="currentColor"
-                    class="text-white/50"
+                    class="dark:text-white/40 light:text-gray-900/30"
                     stroke-width="1"
                     stroke-linecap="round"
                     fill="none"
@@ -101,6 +104,7 @@ import planesData from '~/constants/planesData.js';
 import BlockData from '~/pages/components/BlockData.vue';
 import CardPlane from '~/pages/components/CardPlane.vue';
 import LucidePlaneIcon from '~/pages/components/svg/LucidePlaneIcon.vue';
+import TableData from '~/pages/components/TableData.vue';
 
 const REFRESH_RATE = 50;
 const MAX_VISUAL_PLANES = 200;
@@ -200,7 +204,12 @@ const displayedData = computed(() => {
                 },
                 {
                     title: 'Nb. of seats',
-                    value: totalNbSeats.value
+                    value: totalNbSeats.value,
+                    tgvEquivalent: {
+                        title: 'TGV equivalent',
+                        value: totalNbSeats.value / 740,
+                        unit: 'TGV'
+                    }
                 }
             ]
         },
@@ -227,7 +236,13 @@ const displayedData = computed(() => {
                 {
                     title: 'Produced per second',
                     value: useFormat().number(totalFuelPerSecond.value * 2.5, 2, 2),
-                    unit: 'kg CO₂/s'
+                    unit: 'kg CO₂/s',
+                    tgvEquivalent: {
+                        title: 'TGV equivalent',
+                        value: (totalFuelPerSecond.value * 2.5) / 0.15,
+                        // 1.702kg/km×0.0889km/s=0.151kg/s
+                        unit: 'TGV'
+                    }
                 },
                 {
                     title: 'Produced so far',

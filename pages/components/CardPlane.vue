@@ -15,7 +15,7 @@
                                     {{ subBlock.title }}
                                 </td>
 
-                                <td class="pl-4 text-xs text-neutral-400">
+                                <td class="pl-4 text-xs text-neutral-400 font-bold">
                                     {{ subBlock.value }}
                                     <span v-if="subBlock.unit">{{ subBlock.unit }}</span>
                                 </td>

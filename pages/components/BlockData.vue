@@ -16,7 +16,7 @@
         </div>
 
         <div class="grow">
-            <div v-for="(d, i) in data.data" :key="i" class="grid grid-cols-2">
+            <div v-for="(d, i) in data.data" :key="i" class="grid grid-cols-3">
                 <div>
                     {{ d.title }}
                 </div>
@@ -24,6 +24,10 @@
                 <div>
                     {{ d.value }}
                     <span v-if="d.unit">{{ d.unit }}</span>
+                </div>
+
+                <div v-if="d.tgvEquivalent">
+                    {{ d.tgvEquivalent.title }}: {{ useFormat().number(d.tgvEquivalent.value, 0, 1) }} {{ d.tgvEquivalent.unit }}
                 </div>
             </div>
         </div>
