@@ -8,4 +8,5 @@ export interface Plane {
     fuelBurnKgPerKm: number;
     fuelPerSeatLPer100Km: number;
     litersPerSecond: number;
+    cruiseSpeedKmh: number;
 }

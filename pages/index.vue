@@ -84,14 +84,67 @@
         <div
             v-for="fp in flyingPlanes.filter(p => p.iconVisible)"
             :key="`icon-${fp.id}`"
-            class="absolute will-change-transform"
+            class="absolute will-change-transform cursor-pointer"
             :style="{
                 left: fp.x + 'px',
                 top: fp.y + 'px',
                 transform: `translate(-50%, -50%) rotate(${fp.angle}deg)`
             }"
+            @mouseenter="hoveredPlane = fp"
+            @mouseleave="hoveredPlane = null"
         >
             <LucidePlaneIcon></LucidePlaneIcon>
+        </div>
+
+        <!-- Flight info tooltip -->
+        <div
+            v-if="hoveredPlane"
+            class="absolute z-50 bg-gray-900 text-white p-3 rounded-lg shadow-lg border border-gray-700 pointer-events-none"
+            :style="{
+                left: hoveredPlane.x + 30 + 'px',
+                top: hoveredPlane.y - 10 + 'px',
+                transform: 'translateY(-50%)'
+            }"
+        >
+            <div class="text-sm font-semibold text-blue-300 mb-2">
+                {{ hoveredPlane.flightData.flightNumber }}
+            </div>
+            
+            <div class="text-xs font-medium text-gray-300 mb-2">
+                {{ hoveredPlane.flightData.brand }} {{ hoveredPlane.flightData.model }}
+            </div>
+
+            <div class="text-xs space-y-1">
+                <div>
+                    <span class="text-gray-400">Route:</span>
+                    {{ hoveredPlane.flightData.origin }} → {{ hoveredPlane.flightData.destination }}
+                </div>
+
+                <div>
+                    <span class="text-gray-400">Flight time:</span>
+                    {{ hoveredPlane.flightData.flightTime }}
+                </div>
+
+                <div>
+                    <span class="text-gray-400">Altitude:</span>
+                    {{ hoveredPlane.flightData.altitude.toLocaleString() }} ft.
+                </div>
+
+                <div>
+                    <span class="text-gray-400">Speed:</span>
+                    {{ hoveredPlane.flightData.speed }} km/h
+                </div>
+                
+                <div v-if="hoveredPlane.flightData.plane">
+                    <span class="text-gray-400">Seats:</span>
+                    {{ hoveredPlane.flightData.plane.seats }}
+                </div>
+                
+                <div v-if="hoveredPlane.flightData.plane">
+                    <span class="text-gray-400">Range:</span>
+                    {{ hoveredPlane.flightData.plane.sectorKm.toLocaleString() }} km
+                </div>
+            </div>
         </div>
 
         <CreatedBy class="absolute bottom-0"></CreatedBy>
@@ -165,6 +218,7 @@ const selectedPlane = computed(() => {
 
 const activePlanes = ref([]);
 const totalFuelBurned = ref(0);
+const hoveredPlane = ref(null);
 
 const totalNbPlanes = computed(() => {
     return activePlanes.value.length;
@@ -310,7 +364,7 @@ function addPlane() {
     activePlanes.value.push(selectedPlane.value);
 
     if (activePlanes.value.length <= MAX_VISUAL_PLANES) {
-        spawnFlyingPlane();
+        spawnFlyingPlane(selectedPlane.value);
     }
 }
 

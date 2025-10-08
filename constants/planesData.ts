@@ -21,7 +21,8 @@ const thingsData: Plane[] = [
         "sectorKm": 10277,
         "fuelBurnKgPerKm": 6.55,
         "fuelPerSeatLPer100Km": 3.3,
-        "litersPerSecond": 2.05
+        "litersPerSecond": 2.05,
+        "cruiseSpeedKmh": 871
     },
     // {
     //     "slug": "airbus-a330-300-274-10275",
@@ -142,7 +143,8 @@ const thingsData: Plane[] = [
         "sectorKm": 11000,
         "fuelBurnKgPerKm": 13.78,
         "fuelPerSeatLPer100Km": 3.16,
-        "litersPerSecond": 4.30
+        "litersPerSecond": 4.30,
+        "cruiseSpeedKmh": 903
     },
     // {
     //     "slug": "boeing-747-400-416-11000",
@@ -175,7 +177,8 @@ const thingsData: Plane[] = [
         "sectorKm": 10147,
         "fuelBurnKgPerKm": 12.31,
         "fuelPerSeatLPer100Km": 3.16,
-        "litersPerSecond": 3.85
+        "litersPerSecond": 3.85,
+        "cruiseSpeedKmh": 913
     },
     // {
     //     "slug": "boeing-747-8-467-11000",

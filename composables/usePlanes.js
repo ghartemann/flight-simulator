@@ -19,7 +19,30 @@ export function usePlanes() {
         containerSize.height = Math.floor(rect.height);
     }
 
-    function spawnFlyingPlane() {
+    // Flight data generators
+    function generateFlightNumber() {
+        const airlines = ['AF', 'BA', 'LH', 'KL', 'LX', 'IB', 'OS', 'SK'];
+        const airline = airlines[Math.floor(Math.random() * airlines.length)];
+        const number = Math.floor(Math.random() * 9000) + 1000;
+        return `${airline}${number}`;
+    }
+
+    function generateAirportCode() {
+        const airports = ['CDG', 'LHR', 'FRA', 'AMS', 'MAD', 'FCO', 'BCN', 'VIE', 'ZUR', 'CPH', 'ARN', 'OSL', 'HEL', 'WAW', 'PRG'];
+        return airports[Math.floor(Math.random() * airports.length)];
+    }
+
+    function generateFlightTime() {
+        const hours = Math.floor(Math.random() * 12) + 1;
+        const minutes = Math.floor(Math.random() * 60);
+        return `${hours}h ${minutes}m`;
+    }
+
+    function generateAltitude() {
+        return Math.floor(Math.random() * 30000) + 25000; // 25,000 - 55,000 ft
+    }
+
+    function spawnFlyingPlane(selectedPlane = null) {
         const width = containerSize.width || window.innerWidth;
         const height = containerSize.height || window.innerHeight;
 
@@ -55,6 +78,13 @@ export function usePlanes() {
 
         const id = nextFlyingPlaneId++;
 
+        const origin = generateAirportCode();
+        let destination = generateAirportCode();
+
+        while (destination === origin) {
+            destination = generateAirportCode();
+        }
+
         flyingPlanes.value.push({
             id,
             x,
@@ -64,7 +94,18 @@ export function usePlanes() {
             angle: angleDeg,
             trail: [{ x, y }],
             iconVisible: true,
-            frozen: false
+            frozen: false,
+            flightData: {
+                flightNumber: generateFlightNumber(),
+                origin: origin,
+                destination: destination,
+                flightTime: generateFlightTime(),
+                altitude: generateAltitude(),
+                speed: selectedPlane ? selectedPlane.cruiseSpeedKmh : 871, // Use actual plane speed or default
+                model: selectedPlane ? selectedPlane.model : 'A330-200',
+                brand: selectedPlane ? selectedPlane.brand : 'Airbus',
+                plane: selectedPlane // Store the full plane object
+            }
         });
     }
 
