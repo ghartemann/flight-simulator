@@ -19,22 +19,57 @@ export function usePlanes() {
         containerSize.height = Math.floor(rect.height);
     }
 
-    // Flight data generators
     function generateFlightNumber() {
-        const airlines = ['AF', 'BA', 'LH', 'KL', 'LX', 'IB', 'OS', 'SK'];
+        const airlines = [
+            // Europe
+            'AF', 'BA', 'LH', 'KL', 'LX', 'IB', 'OS', 'SK', 'AY', 'AZ', 'LO', 'OK', 'SN', 'TP', 'UX',
+            // North America
+            'AA', 'DL', 'UA', 'WN', 'AC', 'WS', 'B6', 'AS', 'F9', 'NK', 'QX',
+            // Asia
+            'NH', 'JL', 'CX', 'SQ', 'KE', 'OZ', 'MU', 'CA', 'CZ', 'TG', 'VN', 'BR',
+            // Middle East
+            'EK', 'QR', 'EY', 'SV', 'GF', 'KU', 'WY',
+            // Oceania
+            'QF', 'NZ', 'VA', 'JQ',
+            // Latin America
+            'LA', 'AV', 'CM', 'AM', 'G3', 'AR'
+        ];
+
         const airline = airlines[Math.floor(Math.random() * airlines.length)];
-        const number = Math.floor(Math.random() * 9000) + 1000;
+        const number = Math.floor(Math.random() * 9000) + 1000; // 1000–9999
+
         return `${airline}${number}`;
     }
 
     function generateAirportCode() {
-        const airports = ['CDG', 'LHR', 'FRA', 'AMS', 'MAD', 'FCO', 'BCN', 'VIE', 'ZUR', 'CPH', 'ARN', 'OSL', 'HEL', 'WAW', 'PRG'];
+        const airports = [
+            // Europe
+            'CDG', 'ORY', 'LHR', 'LGW', 'MAN', 'FRA', 'MUC', 'BER', 'AMS', 'BRU', 'ZRH', 'GVA',
+            'MAD', 'BCN', 'FCO', 'MXP', 'VIE', 'CPH', 'ARN', 'OSL', 'HEL', 'DUB', 'PRG', 'WAW',
+            'ATH', 'LIS', 'BUD', 'LED', 'IST',
+            // North America
+            'JFK', 'LGA', 'EWR', 'ORD', 'LAX', 'SFO', 'SEA', 'DFW', 'ATL', 'MIA', 'YYZ', 'YUL', 'YVR',
+            'DEN', 'IAH', 'PHX', 'BOS', 'DTW', 'MSP', 'LAS', 'TPA', 'SLC', 'BWI', 'MCO', 'CLT',
+            // Latin America
+            'MEX', 'BOG', 'LIM', 'SCL', 'GRU', 'GIG', 'EZE', 'PTY', 'HAV', 'SDQ', 'SJO',
+            // Middle East
+            'DXB', 'DOH', 'AUH', 'RUH', 'JED', 'KWI', 'BHR', 'MCT', 'AMM', 'CAI',
+            // Asia
+            'HKG', 'PEK', 'PVG', 'CAN', 'ICN', 'GMP', 'NRT', 'HND', 'KIX', 'TPE', 'SIN', 'BKK', 'HAN',
+            'DEL', 'BOM', 'HYD', 'MAA', 'KUL', 'CGK', 'MNL',
+            // Oceania
+            'SYD', 'MEL', 'BNE', 'AKL', 'CHC', 'PER', 'ADL', 'CBR', 'WLG', 'HBA',
+            // Africa
+            'JNB', 'CPT', 'ADD', 'NBO', 'CAI', 'CMN', 'DSS', 'LOS', 'ACC', 'DAR'
+        ];
+
         return airports[Math.floor(Math.random() * airports.length)];
     }
 
     function generateFlightTime() {
         const hours = Math.floor(Math.random() * 12) + 1;
         const minutes = Math.floor(Math.random() * 60);
+
         return `${hours}h ${minutes}m`;
     }
 
@@ -42,7 +77,7 @@ export function usePlanes() {
         return Math.floor(Math.random() * 30000) + 25000; // 25,000 - 55,000 ft
     }
 
-    function spawnFlyingPlane(selectedPlane = null) {
+    function spawnFlyingPlane(selectedPlane) {
         const width = containerSize.width || window.innerWidth;
         const height = containerSize.height || window.innerHeight;
 
@@ -101,10 +136,10 @@ export function usePlanes() {
                 destination: destination,
                 flightTime: generateFlightTime(),
                 altitude: generateAltitude(),
-                speed: selectedPlane ? selectedPlane.cruiseSpeedKmh : 871, // Use actual plane speed or default
-                model: selectedPlane ? selectedPlane.model : 'A330-200',
-                brand: selectedPlane ? selectedPlane.brand : 'Airbus',
-                plane: selectedPlane // Store the full plane object
+                speed: selectedPlane.cruiseSpeedKmh,
+                model: selectedPlane.model,
+                brand: selectedPlane.brand,
+                plane: selectedPlane
             }
         });
     }

@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-button {
+button:not(:disabled) {
     cursor: pointer;
+}
+
+button:disabled {
+    cursor: initial;
 }

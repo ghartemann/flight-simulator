@@ -1,7 +1,12 @@
 <template>
-    <div class="w-full min-h-screen flex flex-col justify-center items-center overflow-hidden relative pb-16" ref="containerEl">
-        <UCard variant="soft"
-               class="z-50 w-1/2 backdrop-blur-md rounded-xl p-4"
+    <div class="w-full min-h-screen flex flex-col justify-center items-center overflow-hidden relative pb-16"
+         ref="containerEl"
+         @click="onContainerClick"
+    >
+        <UCard
+            variant="soft"
+            class="z-50 w-1/2 backdrop-blur-md rounded-xl p-4"
+            @click.stop
         >
             <!-- Selected card -->
             <CardPlane
@@ -32,15 +37,17 @@
                     class="rounded-full"
                     @click="addPlane"
                     icon="i-lucide-plane-takeoff"
+                    :disabled="!selectedPlane"
                 >
                     Take off
                 </UButton>
 
                 <UButton
                     size="xl"
+                    variant="subtle"
                     class="rounded-full"
                     @click="addAllPlanes"
-                    icon="i-lucide-plane-takeoff"
+                    icon="i-lucide-sparkles"
                 >
                     Match with the real world
                 </UButton>
@@ -48,15 +55,6 @@
 
             <UCard variant="outline">
                 <TableData :data="displayedData"></TableData>
-
-
-<!--                <div class="flex flex-col gap-4">-->
-<!--                    <BlockData-->
-<!--                        v-for="(data, index) in displayedData"-->
-<!--                        :key="index"-->
-<!--                        :data="data"-->
-<!--                    ></BlockData>-->
-<!--                </div>-->
             </UCard>
         </UCard>
 
@@ -85,67 +83,25 @@
             v-for="fp in flyingPlanes.filter(p => p.iconVisible)"
             :key="`icon-${fp.id}`"
             class="absolute will-change-transform cursor-pointer"
+            @click.stop
             :style="{
                 left: fp.x + 'px',
                 top: fp.y + 'px',
                 transform: `translate(-50%, -50%) rotate(${fp.angle}deg)`
             }"
-            @mouseenter="hoveredPlane = fp"
-            @mouseleave="hoveredPlane = null"
+            @pointerdown="onPointerDown($event, fp)"
+            @pointerup="onPointerUp($event, fp)"
+            @pointercancel="onPointerCancel($event)"
+            @mouseenter="onMouseEnter(fp)"
+            @mouseleave="onMouseLeave(fp)"
         >
             <LucidePlaneIcon></LucidePlaneIcon>
         </div>
 
-        <!-- Flight info tooltip -->
-        <div
-            v-if="hoveredPlane"
-            class="absolute z-50 bg-gray-900 text-white p-3 rounded-lg shadow-lg border border-gray-700 pointer-events-none"
-            :style="{
-                left: hoveredPlane.x + 30 + 'px',
-                top: hoveredPlane.y - 10 + 'px',
-                transform: 'translateY(-50%)'
-            }"
-        >
-            <div class="text-sm font-semibold text-blue-300 mb-2">
-                {{ hoveredPlane.flightData.flightNumber }}
-            </div>
-            
-            <div class="text-xs font-medium text-gray-300 mb-2">
-                {{ hoveredPlane.flightData.brand }} {{ hoveredPlane.flightData.model }}
-            </div>
-
-            <div class="text-xs space-y-1">
-                <div>
-                    <span class="text-gray-400">Route:</span>
-                    {{ hoveredPlane.flightData.origin }} → {{ hoveredPlane.flightData.destination }}
-                </div>
-
-                <div>
-                    <span class="text-gray-400">Flight time:</span>
-                    {{ hoveredPlane.flightData.flightTime }}
-                </div>
-
-                <div>
-                    <span class="text-gray-400">Altitude:</span>
-                    {{ hoveredPlane.flightData.altitude.toLocaleString() }} ft.
-                </div>
-
-                <div>
-                    <span class="text-gray-400">Speed:</span>
-                    {{ hoveredPlane.flightData.speed }} km/h
-                </div>
-                
-                <div v-if="hoveredPlane.flightData.plane">
-                    <span class="text-gray-400">Seats:</span>
-                    {{ hoveredPlane.flightData.plane.seats }}
-                </div>
-                
-                <div v-if="hoveredPlane.flightData.plane">
-                    <span class="text-gray-400">Range:</span>
-                    {{ hoveredPlane.flightData.plane.sectorKm.toLocaleString() }} km
-                </div>
-            </div>
-        </div>
+        <PlaneTooltip
+            v-if="hoveredPlane || clickedPlane"
+            :hovered-plane="hoveredPlane || clickedPlane"
+        ></PlaneTooltip>
 
         <CreatedBy class="absolute bottom-0"></CreatedBy>
     </div>
@@ -154,8 +110,8 @@
 <script setup>
 import { usePlanes } from '~/composables/usePlanes.js';
 import planesData from '~/constants/planesData.js';
-import BlockData from '~/pages/components/BlockData.vue';
 import CardPlane from '~/pages/components/CardPlane.vue';
+import PlaneTooltip from '~/pages/components/PlaneTooltip.vue';
 import LucidePlaneIcon from '~/pages/components/svg/LucidePlaneIcon.vue';
 import TableData from '~/pages/components/TableData.vue';
 
@@ -219,6 +175,7 @@ const selectedPlane = computed(() => {
 const activePlanes = ref([]);
 const totalFuelBurned = ref(0);
 const hoveredPlane = ref(null);
+const clickedPlane = ref(null);
 
 const totalNbPlanes = computed(() => {
     return activePlanes.value.length;
@@ -379,13 +336,85 @@ function changePlane() {
     dropdownShown.value = true;
 }
 
+function onMouseEnter(fp) {
+    if (clickedPlane.value && clickedPlane.value !== fp) {
+        clickedPlane.value = null;
+    }
+
+    hoveredPlane.value = fp;
+}
+
+function onMouseLeave(fp) {
+    if (hoveredPlane.value === fp) {
+        hoveredPlane.value = null;
+    }
+}
+
+function onContainerClick(e) {
+    if (e.target === containerEl.value || e.target.closest('svg')) {
+        clickedPlane.value = null;
+        hoveredPlane.value = null;
+    }
+}
+
+const globalUpHandlers = new WeakMap();
+
+function onPointerDown(e, fp) {
+    try {
+        e.currentTarget.setPointerCapture(e.pointerId);
+    } catch (_) {
+        // ignore if not supported
+    }
+
+    const onGlobalUp = () => {
+        if (clickedPlane.value === fp) {
+            clickedPlane.value = null;
+            hoveredPlane.value = null;
+        } else {
+            selectedPlane.value = fp;
+            clickedPlane.value = fp;
+            hoveredPlane.value = fp;
+        }
+        globalUpHandlers.delete(e.currentTarget);
+    };
+
+    globalUpHandlers.set(e.currentTarget, onGlobalUp);
+    window.addEventListener('pointerup', onGlobalUp, { once: true });
+}
+
+function onPointerUp(e, fp) {
+    if (clickedPlane.value === fp) {
+        clickedPlane.value = null;
+        hoveredPlane.value = null;
+    } else {
+        selectedPlane.value = fp;
+        clickedPlane.value = fp;
+        hoveredPlane.value = fp;
+    }
+
+    try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch (_) {
+    }
+
+    const handler = globalUpHandlers.get(e.currentTarget);
+    if (handler) {
+        window.removeEventListener('pointerup', handler);
+        globalUpHandlers.delete(e.currentTarget);
+    }
+}
+
+function onPointerCancel(e) {
+    const handler = globalUpHandlers.get(e.currentTarget);
+    if (handler) {
+        window.removeEventListener('pointerup', handler);
+        globalUpHandlers.delete(e.currentTarget);
+    }
+}
+
 watch(selectedPlaneSlug, (newVal) => {
     if (newVal) {
         dropdownShown.value = false;
     }
 });
 </script>
-
-<style scoped>
-
-</style>
