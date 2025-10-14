@@ -24,7 +24,11 @@
         <div
             v-for="fp in flyingPlanes.filter(p => p.iconVisible)"
             :key="`icon-${fp.id}`"
-            class="absolute will-change-transform cursor-pointer"
+            class="absolute will-change-transform cursor-pointer rounded-full p-2 transition-colors"
+            :class="{
+                'bg-primary/50': isHovered(fp) || isClicked(fp),
+                'hover:bg-primary/50': !isClicked(fp)
+            }"
             @click.stop
             :style="{
                 left: fp.x + 'px',
@@ -37,7 +41,7 @@
             @mouseenter="emit('mouseenter', fp)"
             @mouseleave="emit('mouseleave', fp)"
         >
-            <LucidePlaneIcon />
+            <LucidePlaneIcon></LucidePlaneIcon>
         </div>
     </div>
 </template>
@@ -45,7 +49,7 @@
 <script setup>
 import LucidePlaneIcon from '~/pages/components/svg/LucidePlaneIcon.vue';
 
-defineProps({
+const props = defineProps({
     flyingPlanes: {
         type: Array,
         required: true
@@ -53,8 +57,24 @@ defineProps({
     containerSize: {
         type: Object,
         required: true
+    },
+    hoveredPlane: {
+        type: Object,
+        default: null
+    },
+    clickedPlane: {
+        type: Object,
+        default: null
     }
 });
 
 const emit = defineEmits(['pointerdown', 'pointerup', 'pointercancel', 'mouseenter', 'mouseleave']);
+
+function isHovered(fp) {
+    return props.hoveredPlane === fp;
+}
+
+function isClicked(fp) {
+    return props.clickedPlane === fp;
+}
 </script>

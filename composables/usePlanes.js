@@ -1,5 +1,7 @@
 import { reactive, ref } from 'vue';
 
+const SPEED_SCALE = 0.02; // This means 1000 km/h ≈ 20 pixels/second
+
 export function usePlanes() {
     const containerEl = ref(null);
     const containerSize = reactive({ width: 0, height: 0 });
@@ -104,7 +106,11 @@ export function usePlanes() {
             angleRad = rand((-1 * Math.PI) / 6, (1 * Math.PI) / 6);
         }
 
-        const speedPixelsPerSecond = rand(10, 30);
+        const speedFactor = Math.random() * (1.0 - 0.85) + 0.85;
+        const cruiseSpeedKmh = selectedPlane.cruiseSpeedKmh || 800;
+        const actualCruiseSpeedKmh = cruiseSpeedKmh * speedFactor;
+        const speedPixelsPerSecond = actualCruiseSpeedKmh * SPEED_SCALE;
+
         const vx = Math.cos(angleRad) * speedPixelsPerSecond;
         const vy = Math.sin(angleRad) * speedPixelsPerSecond;
 
@@ -136,7 +142,8 @@ export function usePlanes() {
                 destination: destination,
                 flightTime: generateFlightTime(),
                 altitude: generateAltitude(),
-                speed: selectedPlane.cruiseSpeedKmh,
+                speed: actualCruiseSpeedKmh,
+                heading: headingDeg + 90,
                 model: selectedPlane.model,
                 brand: selectedPlane.brand,
                 plane: selectedPlane

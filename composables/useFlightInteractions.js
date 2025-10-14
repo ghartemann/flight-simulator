@@ -41,6 +41,7 @@ export function useFlightInteractions() {
                 clickedPlane.value = fp;
                 hoveredPlane.value = fp;
             }
+
             globalUpHandlers.delete(e.currentTarget);
         };
 

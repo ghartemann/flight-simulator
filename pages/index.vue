@@ -27,6 +27,8 @@
         <FlightCanvas
             :flying-planes="flyingPlanes"
             :container-size="containerSize"
+            :hovered-plane="hoveredPlane"
+            :clicked-plane="clickedPlane"
             @pointerdown="handlePointerDown"
             @pointerup="handlePointerUp"
             @pointercancel="handlePointerCancel"
@@ -35,7 +37,7 @@
         ></FlightCanvas>
 
         <FlightTooltip
-            v-if="hoveredPlane || clickedPlane"
+            v-if="(hoveredPlane || clickedPlane) && (hoveredPlane?.iconVisible || clickedPlane?.iconVisible)"
             :hovered-plane="hoveredPlane || clickedPlane"
         ></FlightTooltip>
 
