@@ -6,7 +6,7 @@
     >
         <UCard
             variant="soft"
-            class="z-50 w-1/2 backdrop-blur-md rounded-xl p-4"
+            class="z-9999 w-1/2 backdrop-blur-md rounded-xl p-4"
             @click.stop
         >
             <FlightControls

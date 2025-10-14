@@ -1,7 +1,10 @@
 import { ref, computed } from 'vue';
 
 const REFRESH_RATE = 50;
+
 const CO2_PRODUCED_2023 = 882000000000; // in kg
+const CO2_PER_TREE_PER_YEAR = 21; // kg CO₂ absorbed per tree per year (mature tree average)
+const CO2_PER_CAR_PER_YEAR = 4600; // kg CO₂ per average car per year
 
 export function useFlightStats() {
     const timeElapsed = ref(0);
@@ -36,6 +39,9 @@ export function useFlightStats() {
     });
 
     const displayedData = computed(() => {
+        const co2perSec = totalFuelPerSecond.value * 2.5;
+        const co2produced = totalFuelBurned.value * 2.5;
+
         return [
             {
                 icon: 'i-lucide-plane',
@@ -78,24 +84,33 @@ export function useFlightStats() {
                 data: [
                     {
                         title: 'Produced per second',
-                        value: useFormat().number(totalFuelPerSecond.value * 2.5, 2, 2),
+                        value: useFormat().number(co2perSec, 2, 2),
                         unit: 'kg CO₂/s',
                         tgvEquivalent: {
                             title: 'TGV equivalent',
-                            value: (totalFuelPerSecond.value * 2.5) / 0.15,
+                            value: co2perSec / 0.15,
                             unit: 'TGV'
                         }
                     },
                     {
                         title: 'Produced so far',
-                        value: useFormat().number(totalFuelBurned.value * 2.5, 2, 2),
+                        value: useFormat().number(co2produced, 2, 2),
                         unit: 'kg CO₂'
                     },
                     {
                         title: 'Remaining to reach 2023 annual total',
-                        value: useFormat().number(CO2_PRODUCED_2023 - (totalFuelBurned.value * 2.5), 2, 2),
-                        unit: 'kg CO₂'
-                    }
+                        value: useFormat().number(CO2_PRODUCED_2023 - co2produced, 2, 2),
+                        unit: 'kg CO₂'
+                    },
+                    {
+                        title: 'Trees needed to offset',
+                        value: useFormat().number(CO2_PER_TREE_PER_YEAR * co2produced, 0, 0),
+                    },
+                    {
+                        title: 'Equivalent car emissions',
+                        value: useFormat().number(co2produced / CO2_PER_CAR_PER_YEAR, 2, 2),
+                        unit: 'car-years'
+                    },
                 ]
             }
         ];

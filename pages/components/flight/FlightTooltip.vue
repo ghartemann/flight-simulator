@@ -1,12 +1,7 @@
 <template>
     <div
         class="absolute z-50 bg-gray-900 text-white p-3 rounded-lg shadow-lg border border-gray-700 pointer-events-none w-40"
-        :style="
-        {
-            left: hoveredPlane.x + 30 + 'px',
-            top: hoveredPlane.y - 10 + 'px',
-            transform: 'translateY(-50%)'
-        }"
+        :style="tooltipPosition"
     >
         <div class="text-sm font-semibold text-blue-400 mb-2 flex items-center gap-1">
             <span class="text-blue-300">✈</span>
@@ -68,10 +63,13 @@
                 </span>
             </div>
 
-            <div class="flex justify-between pt-1 border-t border-gray-700">
+            <USeparator class="mt-3 mb-2"></USeparator>
+
+            <div class="flex justify-between pt-1">
                 <span class="text-gray-400">
                     Seats:
                 </span>
+
                 <span class="font-mono">
                     {{ hoveredPlane.flightData.plane.seats }}
                 </span>
@@ -101,14 +99,63 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue';
+
+const props = defineProps({
     hoveredPlane: {
         type: Object,
         required: true
     }
 });
 
-function getCardinalDirection(heading) {
+const TOOLTIP_WIDTH = 160; // 40 * 4 (w-40 in Tailwind)
+const TOOLTIP_OFFSET = 30;
+const EDGE_MARGIN = 10;
+
+const tooltipPosition = computed(() => {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+
+    const planeX = props.hoveredPlane.x;
+    const planeY = props.hoveredPlane.y;
+
+    // Determine horizontal position
+    let left = planeX + TOOLTIP_OFFSET;
+    let transform = 'translateY(-50%)';
+
+    // If too close to right edge, show on left side
+    if (planeX + TOOLTIP_OFFSET + TOOLTIP_WIDTH > screenWidth - EDGE_MARGIN) {
+        left = planeX - TOOLTIP_OFFSET - TOOLTIP_WIDTH;
+    }
+
+    // Ensure it doesn't go off the left edge
+    if (left < EDGE_MARGIN) {
+        left = EDGE_MARGIN;
+    }
+
+    // Determine vertical position
+    let top = planeY - 10;
+
+    // If too close to top, adjust
+    if (planeY < 100) {
+        top = planeY + 20;
+        transform = 'translateY(0)';
+    }
+
+    // If too close to bottom, adjust
+    if (planeY > screenHeight - 100) {
+        top = planeY - 20;
+        transform = 'translateY(-100%)';
+    }
+
+    return {
+        left: `${left}px`,
+        top: `${top}px`,
+        transform
+    };
+});
+
+function getCardinalDirection(heading) {  // <-- HERE IT IS
     const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
     const index = Math.round(((heading % 360) / 45)) % 8;
 

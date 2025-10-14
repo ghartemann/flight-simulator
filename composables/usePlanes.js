@@ -48,7 +48,7 @@ export function usePlanes() {
             // Europe
             'CDG', 'ORY', 'LHR', 'LGW', 'MAN', 'FRA', 'MUC', 'BER', 'AMS', 'BRU', 'ZRH', 'GVA',
             'MAD', 'BCN', 'FCO', 'MXP', 'VIE', 'CPH', 'ARN', 'OSL', 'HEL', 'DUB', 'PRG', 'WAW',
-            'ATH', 'LIS', 'BUD', 'LED', 'IST',
+            'ATH', 'LIS', 'BUD', 'LED', 'IST', 'LYS',
             // North America
             'JFK', 'LGA', 'EWR', 'ORD', 'LAX', 'SFO', 'SEA', 'DFW', 'ATL', 'MIA', 'YYZ', 'YUL', 'YVR',
             'DEN', 'IAH', 'PHX', 'BOS', 'DTW', 'MSP', 'LAS', 'TPA', 'SLC', 'BWI', 'MCO', 'CLT',
