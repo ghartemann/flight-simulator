@@ -98,11 +98,6 @@ export function useFlightStats() {
                         unit: 'kg CO₂'
                     },
                     {
-                        title: 'Remaining to reach 2023 annual total',
-                        value: useFormat().number(CO2_PRODUCED_2023 - co2produced, 2, 2),
-                        unit: 'kg CO₂'
-                    },
-                    {
                         title: 'Trees needed to offset',
                         value: useFormat().number(CO2_PER_TREE_PER_YEAR * co2produced, 0, 0),
                     },

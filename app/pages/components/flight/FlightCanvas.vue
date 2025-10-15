@@ -12,7 +12,7 @@
                     v-if="fp.trail.length > 1"
                     :points="fp.trail.map(p => `${p.x},${p.y}`).join(' ')"
                     stroke="currentColor"
-                    class="dark:text-white/40 light:text-gray-900/30"
+                    class="dark:text-white/40 light:text-neutral-300"
                     stroke-width="1"
                     stroke-linecap="round"
                     fill="none"
@@ -24,10 +24,10 @@
         <div
             v-for="fp in flyingPlanes.filter(p => p.iconVisible)"
             :key="`icon-${fp.id}`"
-            class="absolute will-change-transform cursor-pointer rounded-full p-2 transition-colors"
+            class="light:text-neutral-700 dark:text-white absolute will-change-transform cursor-pointer rounded-full p-2 transition-colors"
             :class="{
-                'bg-primary/50': isHovered(fp) || isClicked(fp),
-                'hover:bg-primary/50': !isClicked(fp)
+                'bg-primary/10 border border-primary text-primary!': isHovered(fp) || isClicked(fp),
+                'hover:bg-primary/10 hover:border border-primary hover:text-primary!': !isClicked(fp)
             }"
             @click.stop
             :style="{

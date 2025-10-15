@@ -1,5 +1,5 @@
 <template>
-    <div class="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
+    <UCard class="overflow-hidden" :ui="{body: 'p-0!'}">
         <table class="w-full border-collapse">
             <thead>
                 <tr class="border-b border-neutral-200 dark:border-neutral-700">
@@ -24,13 +24,15 @@
                 </tr>
             </thead>
 
-            <tbody class="">
+            <tbody>
                 <template v-for="(d, i) in data" :key="i">
                     <tr
                         v-for="(item, j) in d.data"
                         :key="j"
-                        class="border-b"
-                        :class="j === d.data.length - 1 ? 'border-b-neutral-700' : 'border-b-neutral-800'"
+                        :class="[
+                            { 'border-b': i < data.length - 1 || j < d.data.length - 1 },
+                            j !== d.data.length - 1 ? 'border-neutral-200 dark:border-neutral-700' : 'border-neutral-300 dark:border-neutral-800'
+                        ]"
                     >
                         <th
                             v-if="j === 0"
@@ -72,7 +74,7 @@
                 </template>
             </tbody>
         </table>
-    </div>
+    </UCard>
 </template>
 
 <script setup>

@@ -1,6 +1,6 @@
 <template>
-    <div
-        class="absolute z-50 bg-gray-900 text-white p-3 rounded-lg shadow-lg border border-gray-700 pointer-events-none w-40"
+    <UCard
+        class="absolute z-50 rounded-lg shadow-lg pointer-events-none w-48"
         :style="tooltipPosition"
     >
         <div class="text-sm font-semibold text-blue-400 mb-2 flex items-center gap-1">
@@ -8,98 +8,59 @@
             {{ hoveredPlane.flightData.flightNumber }}
         </div>
 
-        <div class="text-xs font-medium text-gray-300 mb-2">
+        <div class="text-xs font-medium text-neutral-400 mb-2">
             {{ hoveredPlane.flightData.brand }} {{ hoveredPlane.flightData.model }}
         </div>
 
         <div class="text-xs space-y-1">
-            <div class="flex justify-between">
-                <span class="text-gray-400">
-                    Route:
-                </span>
+            <FlightTooltipInfo
+                label="Route"
+                :value="hoveredPlane.flightData.origin + ' → ' + hoveredPlane.flightData.destination"
+            ></FlightTooltipInfo>
 
-                <span class="font-mono">
-                    {{ hoveredPlane.flightData.origin }} → {{ hoveredPlane.flightData.destination }}
-                </span>
-            </div>
+            <FlightTooltipInfo
+                label="ETA"
+                :value="hoveredPlane.flightData.flightTime"
+            ></FlightTooltipInfo>
 
-            <div class="flex justify-between">
-                <span class="text-gray-400">
-                    ETA:
-                </span>
+            <FlightTooltipInfo
+                label="Alt"
+                :value="hoveredPlane.flightData.altitude.toLocaleString() + 'ft.'"
+            ></FlightTooltipInfo>
 
-                <span class="font-mono">
-                    {{ hoveredPlane.flightData.flightTime }}
-                </span>
-            </div>
+            <FlightTooltipInfo
+                label="Speed"
+                :value="useFormat().number(hoveredPlane.flightData.speed, 0, 0) + 'km/h'"
+            ></FlightTooltipInfo>
 
-            <div class="flex justify-between">
-                <span class="text-gray-400">
-                    Alt:
-                </span>
-
-                <span class="font-mono">
-                    {{ hoveredPlane.flightData.altitude.toLocaleString() }} ft
-                </span>
-            </div>
-
-            <div class="flex justify-between">
-                <span class="text-gray-400">
-                    Speed:
-                </span>
-
-                <span class="font-mono">
-                    {{ useFormat().number(hoveredPlane.flightData.speed, 0, 0) }} km/h
-                </span>
-            </div>
-
-            <div class="flex justify-between">
-                <span class="text-gray-400">
-                    Heading:
-                </span>
-
-                <span class="font-mono">
-                    {{ useFormat().number(hoveredPlane.flightData.heading, 0, 0) }}° {{ getCardinalDirection(hoveredPlane.flightData.heading) }}
-                </span>
-            </div>
+            <FlightTooltipInfo
+                label="Heading"
+                :value="useFormat().number(hoveredPlane.flightData.heading, 0, 0) + '° ' + getCardinalDirection(hoveredPlane.flightData.heading)"
+            ></FlightTooltipInfo>
 
             <USeparator class="mt-3 mb-2"></USeparator>
 
-            <div class="flex justify-between pt-1">
-                <span class="text-gray-400">
-                    Seats:
-                </span>
+            <FlightTooltipInfo
+                label="Seats"
+                :value="hoveredPlane.flightData.plane.seats"
+            ></FlightTooltipInfo>
 
-                <span class="font-mono">
-                    {{ hoveredPlane.flightData.plane.seats }}
-                </span>
-            </div>
+            <FlightTooltipInfo
+                label="Fuel"
+                :value="useFormat().number(hoveredPlane.flightData.plane.litersPerSecond, 1, 1) + ' L/s'"
+            ></FlightTooltipInfo>
 
-            <div class="flex justify-between">
-                <span class="text-gray-400">
-                    Fuel:
-                </span>
-
-                <span class="font-mono text-orange-400">
-                    {{ useFormat().number(hoveredPlane.flightData.plane.litersPerSecond, 1, 1) }} L/s
-                </span>
-            </div>
-
-            <div class="flex justify-between">
-                <span class="text-gray-400">
-                    CO₂:
-                </span>
-
-                <span class="font-mono text-red-400">
-                    {{ useFormat().number(hoveredPlane.flightData.plane.litersPerSecond * 2.5, 1, 1) }} kg/s
-                </span>
-            </div>
+            <FlightTooltipInfo
+                label="CO₂"
+                :value="useFormat().number(hoveredPlane.flightData.plane.litersPerSecond * 2.5, 1, 1) + ' kg/s'"
+            ></FlightTooltipInfo>
         </div>
-    </div>
+    </UCard>
 </template>
 
 <script setup>
 import { computed } from 'vue';
+import FlightTooltipInfo from '~/pages/components/flight/FlightTooltipInfo.vue';
 
 const props = defineProps({
     hoveredPlane: {
@@ -155,9 +116,10 @@ const tooltipPosition = computed(() => {
     };
 });
 
-function getCardinalDirection(heading) {  // <-- HERE IT IS
+function getCardinalDirection(heading) {
     const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-    const index = Math.round(((heading % 360) / 45)) % 8;
+    const normalized = ((heading % 360) + 360) % 360;
+    const index = Math.round(normalized / 45) % 8;
 
     return directions[index];
 }

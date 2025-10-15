@@ -6,7 +6,7 @@
     >
         <UCard
             variant="soft"
-            class="z-9999 w-1/2 backdrop-blur-md rounded-xl p-4"
+            class="z-9999 w-1/2 backdrop-blur-md rounded-xl p-4 shadow-xl"
             @click.stop
         >
             <FlightControls
@@ -19,9 +19,7 @@
                 @change-plane="changePlane"
             ></FlightControls>
 
-            <UCard variant="outline">
-                <TableData :data="displayedData" />
-            </UCard>
+            <TableData :data="displayedData" />
         </UCard>
 
         <FlightCanvas
