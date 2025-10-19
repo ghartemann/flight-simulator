@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue';
+import { defineStore } from 'pinia';
 
 const REFRESH_RATE = 50;
 
@@ -6,7 +7,7 @@ const CO2_PRODUCED_2023 = 882000000000; // in kg
 const CO2_PER_TREE_PER_YEAR = 21; // kg CO₂ absorbed per tree per year (mature tree average)
 const CO2_PER_CAR_PER_YEAR = 4600; // kg CO₂ per average car per year
 
-export function useFlightStats() {
+export const useFlightStatsStore = defineStore('flightStats', () => {
     const timeElapsed = ref(0);
     const lastUpdateTime = ref(Date.now());
     const activePlanes = ref([]);
@@ -182,11 +183,13 @@ export function useFlightStats() {
         timeElapsed,
         activePlanes,
         totalFuelBurned,
+        totalFuelBurnedEasterEgg,
 
         // Computed
         totalNbPlanes,
         totalNbSeats,
         totalFuelPerSecond,
+        totalFuelPerSecondEasterEgg,
         displayedData,
         displayedDataEasterEgg,
 
@@ -196,4 +199,4 @@ export function useFlightStats() {
         addPlane,
         reset
     };
-}
+});

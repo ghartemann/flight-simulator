@@ -35,6 +35,8 @@
             :container-size="containerSize"
             :hovered-plane="hoveredPlane"
             :clicked-plane="clickedPlane"
+            :easter-egg-fuel-burned="totalFuelBurnedEasterEgg"
+            :easter-egg-fuel-per-second="totalFuelPerSecondEasterEgg"
             @spawn-easter-egg-plane="handleSpawnEasterEgg"
             @update-easter-egg-plane="handleUpdateEasterEgg"
             @pointerdown="onPointerDown"
@@ -55,8 +57,9 @@
 
 <script setup>
 import { useFlightInteractions } from '~/composables/useFlightInteractions.js';
-import { useFlightStats } from '~/composables/useFlightStats.js';
+import { useFlightStatsStore } from '~/stores/flightStats.js';
 import { usePlanes } from '~/composables/usePlanes.js';
+import { storeToRefs } from 'pinia';
 import planesData from '~/constants/planesData.js';
 import FlightCanvas from '~/pages/components/flight/FlightCanvas.vue';
 import FlightControls from '~/pages/components/flight/FlightControls.vue';
@@ -74,7 +77,7 @@ function handleSpawnEasterEgg(plane) {
     addPlaneToStats(plane);
 }
 
-function handleUpdateEasterEgg({ x, y, angle, trail }) {
+function handleUpdateEasterEgg({ x, y, angle, trail, litersPerSecond }) {
     const plane = flyingPlanes.value.find(p => p.id === 'easter-egg-plane');
 
     if (plane) {
@@ -82,6 +85,11 @@ function handleUpdateEasterEgg({ x, y, angle, trail }) {
         plane.y = y;
         plane.angle = angle;
         plane.trail.push(trail);
+        
+        // Update fuel consumption if provided
+        if (litersPerSecond !== undefined) {
+            plane.litersPerSecond = litersPerSecond;
+        }
     }
 }
 
@@ -95,14 +103,19 @@ const {
     cleanup
 } = usePlanes();
 
+const flightStatsStore = useFlightStatsStore();
 const {
     activePlanes,
     totalFuelBurned,
     displayedData,
+    totalFuelBurnedEasterEgg,
+    totalFuelPerSecondEasterEgg
+} = storeToRefs(flightStatsStore);
+const {
     startStatsTimer,
     stopStatsTimer,
     addPlane: addPlaneToStats
-} = useFlightStats();
+} = flightStatsStore;
 
 const {
     hoveredPlane,

@@ -81,9 +81,32 @@
 
                 <div>
                     <div class="text-xs text-primary/70 font-medium">
+                        Fuel consumption
+                    </div>
+                    <div class="text-sm font-bold text-primary">
+                        {{ easterEggFuelPerSecond.toFixed(2) }} L/s
+                    </div>
+                    <div class="text-xs text-primary/50">
+                        {{ getFuelConsumptionPhase() }}
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="text-xs text-primary/70 font-medium">
                         Fuel burned so far
                     </div>
-
+                    <div class="text-sm font-bold text-primary">
+                        {{ easterEggFuelBurned.toFixed(2) }} L
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="text-xs text-primary/70 font-medium">
+                        CO₂ produced
+                    </div>
+                    <div class="text-sm font-bold text-primary">
+                        {{ (easterEggFuelBurned * 2.5).toFixed(2) }} kg
+                    </div>
                 </div>
             </div>
         </div>
@@ -114,6 +137,14 @@ const props = defineProps({
     easterEgg: {
         type: Boolean,
         default: false
+    },
+    easterEggFuelBurned: {
+        type: Number,
+        default: 0
+    },
+    easterEggFuelPerSecond: {
+        type: Number,
+        default: 0
     },
 });
 
@@ -153,6 +184,45 @@ let animationFrameId = null;
 let EASTER_EGG_MAX_SPEED = 2;
 const EASTER_EGG_ROTATION_SPEED = 1;
 
+// Calculate fuel consumption based on speed
+function calculateFuelConsumption(speed) {
+    const speedKmh = speed * speedCoeff;
+    
+    // Base fuel consumption (idle)
+    let baseConsumption = 0.5; // L/s when stationary
+    
+    // Increase consumption with speed
+    if (speedKmh > 0) {
+        // Linear increase up to cruising speed, then exponential
+        if (speedKmh < 240) {
+            // Ground roll phase - moderate consumption
+            baseConsumption += (speedKmh / 240) * 1.0; // 0.5 to 1.5 L/s
+        } else if (speedKmh < 871) {
+            // Climb and cruise phase - higher consumption
+            const climbRatio = (speedKmh - 240) / (871 - 240);
+            baseConsumption = 1.5 + (climbRatio * 2.0); // 1.5 to 3.5 L/s
+        } else {
+            // Supersonic phase - very high consumption
+            const supersonicRatio = Math.min((speedKmh - 871) / 200, 1); // Cap at 1071 km/h
+            baseConsumption = 3.5 + (supersonicRatio * 3.0); // 3.5 to 6.5 L/s
+        }
+    }
+    
+    return baseConsumption;
+}
+
+function getFuelConsumptionPhase() {
+    const speedKmh = currentSpeed.value * speedCoeff;
+    
+    if (speedKmh < 240) {
+        return 'Ground Roll';
+    } else if (speedKmh < 871) {
+        return 'Climb/Cruise';
+    } else {
+        return 'Supersonic';
+    }
+}
+
 function updateEasterEggPlane() {
     const plane = props.flyingPlanes.find(p => p.id === 'easter-egg-plane');
 
@@ -187,11 +257,16 @@ function updateEasterEggPlane() {
     const newX = Math.max(0, Math.min(props.containerSize.width, plane.x + dx));
     const newY = Math.max(0, Math.min(props.containerSize.height, plane.y + dy));
 
+    // Update fuel consumption based on current speed
+    const newFuelConsumption = calculateFuelConsumption(currentSpeed.value);
+    plane.litersPerSecond = newFuelConsumption;
+
     emit('updateEasterEggPlane', {
         x: newX,
         y: newY,
         angle: newAngle,
-        trail: { x: newX, y: newY }
+        trail: { x: newX, y: newY },
+        litersPerSecond: newFuelConsumption
     });
 
     animationFrameId = requestAnimationFrame(updateEasterEggPlane);
