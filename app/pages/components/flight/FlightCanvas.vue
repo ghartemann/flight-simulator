@@ -47,15 +47,45 @@
         >
             <LucidePlaneIcon></LucidePlaneIcon>
         </div>
+
+        <div
+            v-if="easterEgg"
+            class="fixed bottom-14 left-1/2 transform -translate-x-1/2 bg-primary/20 backdrop-blur-md border border-primary rounded-lg px-6 py-3 pointer-events-none"
+        >
+            <div class="text-center">
+                <div class="text-xs text-primary/70 font-medium">
+                    STATUS
+                </div>
+
+                <div class="text-lg text-primary/70 font-medium">
+                    <span v-if="currentSpeed * speedCoeff < 240">
+                        GROUND
+                    </span>
+
+                    <span v-else class="animate-pulse">
+                        FLYING
+                    </span>
+                </div>
+
+                <div class="text-xs text-primary/70 font-medium">
+                    SPEED
+                </div>
+
+                <div class="text-sm font-bold text-primary">
+                    <span class="text-lg">{{ (currentSpeed * speedCoeff * 0.539957).toFixed(0) }}</span> kts
+                </div>
+
+                <div class="text-sm font-bold text-primary">
+                    <span class="text-lg">{{ (currentSpeed * speedCoeff).toFixed(0) }}</span> km/h
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup>
-import { watch, onUnmounted } from 'vue';
+import { onUnmounted, watch } from 'vue';
 import LucidePlaneIcon from '~/pages/components/svg/LucidePlaneIcon.vue';
-
-const EASTER_EGG_SPEED = 2;
-const EASTER_EGG_ROTATION_SPEED = 1;
 
 const props = defineProps({
     flyingPlanes: {
@@ -82,9 +112,11 @@ const props = defineProps({
 
 const emit = defineEmits(['pointerdown', 'pointerup', 'pointercancel', 'mouseenter', 'mouseleave', 'spawnEasterEggPlane', 'updateEasterEggPlane']);
 
+let audio = null;
 const keys = {
     z: false,
     q: false,
+    s: false,
     d: false
 };
 
@@ -102,11 +134,17 @@ function handleKeyUp(e) {
 
     if (key in keys) {
         e.preventDefault();
+
         keys[key] = false;
     }
 }
 
+const currentSpeed = ref(0);
+const speedCoeff = 395;
+
 let animationFrameId = null;
+let EASTER_EGG_MAX_SPEED = 2;
+const EASTER_EGG_ROTATION_SPEED = 1;
 
 function updateEasterEggPlane() {
     const plane = props.flyingPlanes.find(p => p.id === 'easter-egg-plane');
@@ -115,24 +153,29 @@ function updateEasterEggPlane() {
         return;
     }
 
-    let dx = 0;
-    let dy = 0;
+    let dx, dy;
 
     let newAngle = plane.angle;
 
-    if (keys.q) {
+    if (keys.z && currentSpeed.value <= EASTER_EGG_MAX_SPEED) {
+        currentSpeed.value += .0008;
+    }
+
+    if (keys.s && currentSpeed.value >= 0) {
+        currentSpeed.value -= .0008;
+    }
+
+    if (keys.q && currentSpeed.value * speedCoeff >= 240) {
         newAngle -= EASTER_EGG_ROTATION_SPEED;
     }
 
-    if (keys.d) {
+    if (keys.d && currentSpeed.value * speedCoeff >= 240) {
         newAngle += EASTER_EGG_ROTATION_SPEED;
     }
 
-    if (keys.z) {
-        const radians = (newAngle - 90) * Math.PI / 180;
-        dx = Math.cos(radians) * EASTER_EGG_SPEED;
-        dy = Math.sin(radians) * EASTER_EGG_SPEED;
-    }
+    const radians = (newAngle - 90) * Math.PI / 180;
+    dx = Math.cos(radians) * currentSpeed.value;
+    dy = Math.sin(radians) * currentSpeed.value;
 
     const newX = Math.max(0, Math.min(props.containerSize.width, plane.x + dx));
     const newY = Math.max(0, Math.min(props.containerSize.height, plane.y + dy));
@@ -156,20 +199,36 @@ function cleanup() {
         animationFrameId = null;
     }
 
+    if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+        audio = null;
+    }
+
     keys.z = false;
     keys.q = false;
+    keys.s = false;
     keys.d = false;
+
+    currentSpeed.value = 0;
 }
 
 watch(() => props.easterEgg, (newVal) => {
     if (newVal) {
+        audio = new Audio('dangerzone.mp3');
+        audio.loop = true;
+        audio.volume = 0.5;
+        audio.play().catch(err => {
+            console.log('Audio playback failed:', err);
+        });
+
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
 
         const plane = {
             id: 'easter-egg-plane',
             x: props.containerSize.width / 2,
-            y: props.containerSize.height / 2,
+            y: props.containerSize.height / 1.4,
             vx: 0,
             vy: 0,
             angle: 0,

@@ -4,7 +4,9 @@
         ref="containerEl"
         @click="handleContainerClick"
     >
-        <UButton @click="easterEgg = !easterEgg">test</UButton>
+        <UButton @click="easterEgg = !easterEgg" class="mb-2" color="warning">
+            {{ easterEgg ? 'back' : '[TEST] flight simulator 2025' }}
+        </UButton>
 
         <UCard
             v-if="!easterEgg"
