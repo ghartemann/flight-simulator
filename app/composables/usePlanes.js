@@ -84,7 +84,7 @@ export function usePlanes() {
         const height = containerSize.height || window.innerHeight;
 
         const edge = Math.floor(Math.random() * 4);
-        let x = 0, y = 0, angleRad = 0;
+        let x, y, angleRad;
 
         const rand = (min, max) => Math.random() * (max - min) + min;
 
@@ -165,7 +165,7 @@ export function usePlanes() {
                 const margin = 24;
 
                 flyingPlanes.value.forEach(fp => {
-                    if (fp.frozen) {
+                    if (fp.frozen || fp.isEasterEgg) {
                         return;
                     }
 

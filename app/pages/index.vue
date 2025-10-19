@@ -4,7 +4,10 @@
         ref="containerEl"
         @click="handleContainerClick"
     >
+        <UButton @click="easterEgg = !easterEgg">test</UButton>
+
         <UCard
+            v-if="!easterEgg"
             variant="soft"
             class="z-9999 w-1/2 backdrop-blur-md rounded-xl p-4 shadow-xl"
             @click.stop
@@ -22,11 +25,16 @@
             <TableData :data="displayedData" />
         </UCard>
 
+        <LandingStrip v-else></LandingStrip>
+
         <FlightCanvas
+            :easter-egg="easterEgg"
             :flying-planes="flyingPlanes"
             :container-size="containerSize"
             :hovered-plane="hoveredPlane"
             :clicked-plane="clickedPlane"
+            @spawn-easter-egg-plane="handleSpawnEasterEgg"
+            @update-easter-egg-plane="handleUpdateEasterEgg"
             @pointerdown="handlePointerDown"
             @pointerup="handlePointerUp"
             @pointercancel="handlePointerCancel"
@@ -51,10 +59,38 @@ import planesData from '~/constants/planesData.js';
 import FlightCanvas from '~/pages/components/flight/FlightCanvas.vue';
 import FlightControls from '~/pages/components/flight/FlightControls.vue';
 import FlightTooltip from '~/pages/components/flight/FlightTooltip.vue';
+import LandingStrip from '~/pages/components/flight/LandingStrip.vue';
 import TableData from '~/pages/components/TableData.vue';
 
 const MAX_VISUAL_PLANES = 200;
 const REAL_WORLD_PLANES_IN_THE_SKY = 14000;
+
+const easterEgg = ref(false);
+
+function handleSpawnEasterEgg(plane) {
+    flyingPlanes.value.push(plane);
+}
+
+function handleUpdateEasterEgg({ x, y, angle, trail }) {
+    const plane = flyingPlanes.value.find(p => p.id === 'easter-egg-plane');
+
+    if (plane) {
+        plane.x = x;
+        plane.y = y;
+        plane.angle = angle;
+        plane.trail.push(trail);
+    }
+}
+
+watch(easterEgg, (newVal) => {
+    if (!newVal) {
+        const index = flyingPlanes.value.findIndex(p => p.id === 'easter-egg-plane');
+
+        if (index !== -1) {
+            flyingPlanes.value.splice(index, 1);
+        }
+    }
+});
 
 const meta = {
     title: 'Flight Simulator',
