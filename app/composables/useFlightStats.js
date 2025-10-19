@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const REFRESH_RATE = 50;
 
@@ -11,6 +11,7 @@ export function useFlightStats() {
     const lastUpdateTime = ref(Date.now());
     const activePlanes = ref([]);
     const totalFuelBurned = ref(0);
+    const totalFuelBurnedEasterEgg = ref(0);
 
     let fuelTimer = null;
 
@@ -36,6 +37,39 @@ export function useFlightStats() {
         }
 
         return total.reduce((a, b) => a + b);
+    });
+
+    const totalFuelPerSecondEasterEgg = computed(() => {
+        const plane = activePlanes.value.find(p => p.id === 'easter-egg-plane');
+
+        return plane?.litersPerSecond ?? 0;
+    });
+
+    const displayedDataEasterEgg = computed(() => {
+        const plane = activePlanes.value.find(p => p.id === 'easter-egg-plane');
+
+        if (!plane) {
+            return [];
+        }
+
+        return [
+            {
+                icon: 'i-lucide-fuel',
+                title: 'Fuel',
+                data: [
+                    {
+                        title: 'Burned per second',
+                        value: useFormat().number(plane.litersPerSecond, 2, 2),
+                        unit: 'L/s'
+                    },
+                    {
+                        title: 'Burned so far',
+                        value: useFormat().number(totalFuelBurnedEasterEgg.value, 2, 2),
+                        unit: 'L'
+                    }
+                ]
+            }
+        ];
     });
 
     const displayedData = computed(() => {
@@ -99,13 +133,13 @@ export function useFlightStats() {
                     },
                     {
                         title: 'Trees needed to offset',
-                        value: useFormat().number(CO2_PER_TREE_PER_YEAR * co2produced, 0, 0),
+                        value: useFormat().number(CO2_PER_TREE_PER_YEAR * co2produced, 0, 0)
                     },
                     {
                         title: 'Equivalent car emissions',
                         value: useFormat().number(co2produced / CO2_PER_CAR_PER_YEAR, 2, 2),
                         unit: 'car-years'
-                    },
+                    }
                 ]
             }
         ];
@@ -118,6 +152,7 @@ export function useFlightStats() {
 
         timeElapsed.value += delta;
         totalFuelBurned.value += totalFuelPerSecond.value * delta;
+        totalFuelBurnedEasterEgg.value += totalFuelPerSecondEasterEgg.value * delta;
     }
 
     function startStatsTimer() {
@@ -153,6 +188,7 @@ export function useFlightStats() {
         totalNbSeats,
         totalFuelPerSecond,
         displayedData,
+        displayedDataEasterEgg,
 
         // Methods
         startStatsTimer,

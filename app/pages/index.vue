@@ -2,7 +2,7 @@
     <div
         class="w-full min-h-screen flex flex-col justify-center items-center overflow-hidden relative pb-16"
         ref="containerEl"
-        @click="handleContainerClick"
+        @click="onContainerClick"
     >
         <UButton @click="easterEgg = !easterEgg" class="mb-2" color="warning">
             {{ easterEgg ? 'back' : '[TEST] flight simulator 2025' }}
@@ -24,7 +24,7 @@
                 @change-plane="changePlane"
             ></FlightControls>
 
-            <TableData :data="displayedData" />
+            <TableData :data="displayedData"></TableData>
         </UCard>
 
         <LandingStrip v-else></LandingStrip>
@@ -37,11 +37,11 @@
             :clicked-plane="clickedPlane"
             @spawn-easter-egg-plane="handleSpawnEasterEgg"
             @update-easter-egg-plane="handleUpdateEasterEgg"
-            @pointerdown="handlePointerDown"
-            @pointerup="handlePointerUp"
-            @pointercancel="handlePointerCancel"
-            @mouseenter="handleMouseEnter"
-            @mouseleave="handleMouseLeave"
+            @pointerdown="onPointerDown"
+            @pointerup="onPointerUp"
+            @pointercancel="onPointerCancel"
+            @mouseenter="onMouseEnter"
+            @mouseleave="onMouseLeave"
         ></FlightCanvas>
 
         <FlightTooltip
@@ -71,6 +71,7 @@ const easterEgg = ref(false);
 
 function handleSpawnEasterEgg(plane) {
     flyingPlanes.value.push(plane);
+    addPlaneToStats(plane);
 }
 
 function handleUpdateEasterEgg({ x, y, angle, trail }) {
@@ -83,39 +84,6 @@ function handleUpdateEasterEgg({ x, y, angle, trail }) {
         plane.trail.push(trail);
     }
 }
-
-watch(easterEgg, (newVal) => {
-    if (!newVal) {
-        const index = flyingPlanes.value.findIndex(p => p.id === 'easter-egg-plane');
-
-        if (index !== -1) {
-            flyingPlanes.value.splice(index, 1);
-        }
-    }
-});
-
-const meta = {
-    title: 'Flight Simulator',
-    description: 'It\'s just a template.'
-};
-
-useSeoMeta({
-    description: meta.description,
-    ogTitle: meta.title,
-    ogDescription: meta.description,
-    ogImage: meta.image,
-    ogUrl: meta.url,
-    twitterTitle: meta.title,
-    twitterDescription: meta.description,
-    twitterImage: meta.image,
-    twitterCard: 'summary'
-});
-
-useHead({
-    link: [
-        { rel: 'canonical', href: meta.url }
-    ]
-});
 
 const {
     containerEl,
@@ -199,33 +167,19 @@ function changePlane() {
     dropdownShown.value = true;
 }
 
-function handleMouseEnter(fp) {
-    onMouseEnter(fp);
-}
-
-function handleMouseLeave(fp) {
-    onMouseLeave(fp);
-}
-
-function handleContainerClick(e) {
-    onContainerClick(e, containerEl.value);
-}
-
-function handlePointerDown(e, fp) {
-    onPointerDown(e, fp);
-}
-
-function handlePointerUp(e, fp) {
-    onPointerUp(e, fp);
-}
-
-function handlePointerCancel(e) {
-    onPointerCancel(e);
-}
-
 watch(selectedPlaneSlug, (newVal) => {
     if (newVal) {
         dropdownShown.value = false;
+    }
+});
+
+watch(easterEgg, (newVal) => {
+    if (!newVal) {
+        const index = flyingPlanes.value.findIndex(p => p.id === 'easter-egg-plane');
+
+        if (index !== -1) {
+            flyingPlanes.value.splice(index, 1);
+        }
     }
 });
 </script>

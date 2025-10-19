@@ -78,6 +78,13 @@
                 <div class="text-sm font-bold text-primary">
                     <span class="text-lg">{{ (currentSpeed * speedCoeff).toFixed(0) }}</span> km/h
                 </div>
+
+                <div>
+                    <div class="text-xs text-primary/70 font-medium">
+                        Fuel burned so far
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
@@ -107,7 +114,7 @@ const props = defineProps({
     easterEgg: {
         type: Boolean,
         default: false
-    }
+    },
 });
 
 const emit = defineEmits(['pointerdown', 'pointerup', 'pointercancel', 'mouseenter', 'mouseleave', 'spawnEasterEggPlane', 'updateEasterEggPlane']);
@@ -236,7 +243,23 @@ watch(() => props.easterEgg, (newVal) => {
             iconVisible: true,
             frozen: false,
             isEasterEgg: true,
-            flightData: {}
+            slug: "airbus-a330-200-248-10277",
+            brand: "Airbus",
+            model: "A330-200",
+            firstFlight: 1997,
+            seats: 248,
+            sectorKm: 10277,
+            fuelBurnKgPerKm: 6.55,
+            fuelPerSeatLPer100Km: 3.3,
+            litersPerSecond: 2.05,
+            cruiseSpeedKmh: 871,
+            flightData: {
+                flightNumber: 'DGRZN-01',
+                origin: 'DANGER',
+                destination: 'ZONE',
+                model: 'F-14 Tomcat',
+                brand: 'Grumman'
+            }
         };
 
         emit('spawnEasterEggPlane', plane);
